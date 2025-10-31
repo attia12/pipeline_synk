@@ -7,12 +7,14 @@ import com.google.firebase.FirebaseApp;
 import com.google.firebase.cloud.StorageClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 
 @Service
+@Profile("!test")
 public class FirebaseStorageService {
 
     private static final Logger logger = LoggerFactory.getLogger(FirebaseStorageService.class);
