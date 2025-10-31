@@ -1,0 +1,16 @@
+networks:
+  tictak:
+    external: true
+
+services:
+  tictak-api:
+    image: docker-registry.bramasquare.com/tictak-api-${ENVIRONMENT}
+    container_name: tictak-api
+    restart: always
+    networks:
+      - tictak
+    ports:
+      - "8090:8090"
+    environment:
+      - SPRING_PROFILES_ACTIVE=${ENVIRONMENT}
+      - SPRING_DATA_MONGODB_URI=mongodb://tictak:${DB_PWD}@tictak-mongodb:27017/tictak?authSource=admin

@@ -1,0 +1,245 @@
+@font-face {
+    font-family: 'montserrat';
+    src: url('/fonts/montserrat.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+body {
+    font-family: 'montserrat', Arial, sans-serif;
+    background: #f5f5f5;
+}
+.invoice-container {
+    max-width: 800px;
+    margin: 20px auto;
+    background: white;
+    border: 1px solid #ccc; /* Replaced box-shadow */
+}
+.header {
+    background: #067CE0; /* Simplified from linear-gradient */
+    color: white;
+    padding: 30px;
+    position: relative;
+    min-height: 140px;
+}
+.logo-section {
+    display: block; /* Replaced flex with block */
+    position: relative;
+}
+.logo {
+    display: inline-block; /* Simplified layout */
+    font-size: 32px;
+    font-weight: bold;
+}
+.logo-icon {
+    width: 50px;
+    height: 50px;
+    background: white;
+    margin-right: 15px;
+    display: inline-block;
+    text-align: center;
+    line-height: 50px;
+    border-radius: 8px;
+    color: #067CE0;
+    font-weight: bold;
+    font-size: 22px;
+    border: 1px solid #ccc; /* Replaced box-shadow */
+}
+.tagline {
+    font-size: 14px;
+    margin-top: 5px;
+}
+.devis-title {
+    font-size: 40px;
+    font-weight: bold;
+    color: white;
+    margin-right: 20px;
+    float: right; /* Moved to right side */
+}
+.reference-box {
+    background: #C30273; /* Simplified from linear-gradient */
+    color: white;
+    padding: 10px 25px;
+    border-radius: 30px;
+    font-size: 14px;
+    font-weight: bold;
+    margin-top: 20px;
+    display: inline-block;
+    border: 1px solid #e91e63; /* Replaced box-shadow */
+}
+.client-info {
+    padding: 30px;
+    background: #fafafa;
+}
+.client-details {
+    display: block; /* Replaced grid with block */
+    overflow: hidden;
+}
+.client-left {
+    float: left;
+    width: 50%;
+}
+.client-left h3 {
+    color: #333;
+    font-size: 16px;
+    margin-bottom: 15px;
+}
+.client-left p {
+    margin-bottom: 8px;
+    color: #666;
+    font-size: 14px;
+}
+.client-right {
+    float: right;
+    width: 50%;
+    text-align: right;
+}
+.client-right p {
+    margin-bottom: 8px;
+    color: #666;
+    font-size: 14px;
+}
+.items-table {
+    margin: 0;
+}
+.table-header {
+    background: #067CE0; /* Simplified from linear-gradient */
+    color: white;
+    display: table;
+    width: 100%;
+    padding: 15px 30px;
+    font-weight: bold;
+    border-bottom: 1px solid #ccc; /* Replaced box-shadow */
+}
+.table-header > div {
+    display: table-cell;
+    width: 100px; /* Fixed width for first column */
+}
+.table-header > div:last-child {
+    width: auto;
+}
+.table-row {
+    display: table;
+    width: 100%;
+    padding: 15px 30px;
+    border-bottom: 1px solid #eee;
+}
+.table-row > div {
+    display: table-cell;
+    vertical-align: middle;
+    width: 100px; /* Fixed width for first column */
+}
+.table-row > div:last-child {
+    width: auto;
+}
+.table-row:nth-child(even) {
+    background: #fafafa;
+}
+.qty {
+    font-weight: bold;
+    color: #333;
+}
+.description {
+    color: #666;
+}
+.footer-section {
+    padding: 30px;
+    display: block; /* Replaced grid with block */
+    overflow: hidden;
+}
+.conditions {
+    float: left;
+    width: 50%;
+}
+.conditions h4 {
+    color: #333;
+    margin-bottom: 15px;
+    font-size: 16px;
+}
+.conditions p {
+    color: #666;
+    font-size: 14px;
+    line-height: 1.6;
+    margin-bottom: 30px;
+}
+.signature-section {
+    text-align: center;
+}
+.company-seal {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    margin: 0 auto 15px;
+    display: table;
+    text-align: center;
+    line-height: 100px;
+    background: #f8f9fa; /* Simplified from radial-gradient */
+    color: #067CE0;
+    font-weight: bold;
+    font-size: 16px;
+    border: 1px solid #ccc; /* Replaced box-shadow */
+}
+.company-seal::before {
+    content: '';
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    right: 10px;
+    bottom: 10px;
+    border: 1px solid #067CE0;
+    border-radius: 50%;
+}
+.director-title {
+    color: #666;
+    font-size: 16px;
+    font-weight: bold;
+}
+.pricing {
+    float: right;
+    width: 50%;
+    text-align: right;
+}
+.price-row {
+    display: block; /* Replaced flex with block */
+    margin-bottom: 10px;
+    padding: 8px 0;
+    overflow: hidden;
+}
+.price-label {
+    float: left;
+    color: #747474;
+}
+.price-value {
+    float: right;
+    color: #333;
+    font-weight: bold;
+    min-width: 120px;
+}
+.price-row.total {
+    border-top: 2px solid #067CE0;
+    font-weight: bold;
+    font-size: 18px;
+    color: #333;
+    margin-top: 15px;
+    padding-top: 15px;
+}
+.bottom-footer {
+    background: #067CE0; /* Simplified from linear-gradient */
+    color: white;
+    padding: 25px 30px;
+    text-align: right;
+    position: relative;
+    min-height: 80px;
+}
+.contact-info {
+    position: relative;
+    font-weight: bold;
+}
+.contact-info p {
+    margin-bottom: 5px;
+    font-size: 14px;
+}

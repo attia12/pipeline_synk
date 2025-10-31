@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Demande Spéciale de Déménagement</title>
+    <style>
+        body { font-family: Arial, sans-serif; color: #333; background-color: #f4f4f4; padding: 20px; }
+        .container { max-width: 600px; margin: 0 auto; background-color: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        .header { text-align: center; padding-bottom: 20px; border-bottom: 1px solid #eee; }
+        .header h1 { color: #007BFF; }
+        .content { padding: 20px 0; }
+        .sender-info { font-weight: bold; }
+        .request-content { margin-top: 20px; padding: 15px; background-color: #f9f9f9; border-left: 4px solid #007BFF; }
+        .footer { text-align: center; padding-top: 20px; border-top: 1px solid #eee; color: #777; font-size: 12px; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>Demande Spéciale de Déménagement</h1>
+    </div>
+    <div class="content">
+        <p>Cher Admin,</p>
+        <p>Vous avez reçu une demande spéciale de déménagement de la part de :</p>
+        <p class="sender-info">Expéditeur : <span th:text="${senderEmail}"></span></p>
+        <div class="request-content">
+            <p><strong>Détails de la demande :</strong></p>
+            <p th:text="${content}"></p>
+        </div>
+        <p>Veuillez traiter cette demande et fournir un devis spécifique au plus vite.</p>
+        <p>Merci pour votre attention.</p>
+    </div>
+    <div class="footer">
+        <p>Système Dema - Tous droits réservés © 2025</p>
+    </div>
+</div>
+</body>
+</html>

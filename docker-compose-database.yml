@@ -1,0 +1,17 @@
+networks:
+  tictak:
+    external: true
+
+services:
+  tictak-mongodb:
+    image: mongo:7.0
+    container_name: tictak-mongodb
+    restart: always
+    networks:
+      - tictak
+    volumes:
+      - ./mongodb_data:/data/db
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=tictak
+      - MONGO_INITDB_ROOT_PASSWORD=${DB_PWD}
+      - MONGO_INITDB_DATABASE=tictak

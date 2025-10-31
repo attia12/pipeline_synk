@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Driver WebSocket Test</title>
+  <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1.5.2/dist/sockjs.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
+</head>
+<body>
+<h1>Driver WebSocket Test</h1>
+<p>Check the console for connection status and updates.</p>
+
+<script>
+  const socket = new SockJS('http://localhost:8090/ws');
+  const stompClient = Stomp.over(socket);
+  const jwtToken = "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJtb2hhbWVkLmFpY2hhb3VpLnRpY0BnbWFpbC5jb20iLCJyb2xlcyI6WyJST0xFX0RSSVZFUiJdLCJ1c2VySWQiOiI2N2ZmNzgyZmE0NDU4NzExMTNmNTlmY2YiLCJpYXQiOjE3NDUwNTQxOTcsImV4cCI6MTc0NTA1Nzc5N30.VVvTb8lT1M48HljQc4QV7IRYIuAwDUOnQUoe45qsH_A";
+
+  stompClient.connect({'Authorization': jwtToken}, function (frame) {
+    console.log('Connected: ' + frame);
+    // Set status to online with full message
+    stompClient.send("/app/driver/status", {}, JSON.stringify({
+      userId: "67ff782fa445871113f59fcf",
+      status: "online"
+    }));
+    // Send location updates every 5 seconds
+    setInterval(function() {
+      const location = getCurrentLocation();
+      console.log('Sending location: ', location);
+      stompClient.send("/app/driver/location", {}, JSON.stringify({
+        userId: "67ff782fa445871113f59fcf",
+        latitude: location.latitude,
+        longitude: location.longitude,
+        status: "online"
+      }));
+    }, 5000);
+  }, function (error) {
+    console.error('Connection error: ' + error);
+    setTimeout(() => stompClient.connect({'Authorization': jwtToken}, arguments.callee), 2000); // Reconnect
+  });
+
+  function getCurrentLocation() {
+    // Simulate movement for testing
+    const lat = 37.7749 + (Math.random() - 0.5) * 0.01;
+    const lon = -122.4194 + (Math.random() - 0.5) * 0.01;
+    return { latitude: lat, longitude: lon };
+  }
+</script>
+</body>
+</html>

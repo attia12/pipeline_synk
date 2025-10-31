@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Subadmin Driver Tracking</title>
+    <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1.5.2/dist/sockjs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
+    <style>
+        #driverTable {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        #driverTable th, #driverTable td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        #driverTable th {
+            background-color: #f2f2f2;
+        }
+        .online { color: green; }
+        .offline { color: red; }
+    </style>
+</head>
+<body>
+<h1>Subadmin Driver Tracking</h1>
+<table id="driverTable">
+    <thead>
+    <tr>
+        <th>Driver ID</th>
+        <th>Latitude</th>
+        <th>Longitude</th>
+        <th>Status</th>
+    </tr>
+    </thead>
+    <tbody></tbody>
+</table>
+
+<script>
+    const socket = new SockJS('http://localhost:8090/ws');
+    const stompClient = Stomp.over(socket);
+    const jwtToken = "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbkBleGFtcGxlLmNvbSIsInJvbGVzIjpbIlJPTEVfU1VCX0FETUlOIl0sInVzZXJJZCI6IjY3ZmY3MGZkZTRkY2JlMjVjMzMwNjBmZCIsImlhdCI6MTc0NTMxOTgyNCwiZXhwIjoxNzQ1MzIzNDI0fQ.W6iaZJjDxyx-BdWmHLq8YdIqktcC8eDZGPZj7mReeww"; // Replace with valid subadmin JWT token
+    const subAdminId = "67ff70fde4dcbe25c33060fd"; // Replace with actual subadmin ID
+
+    stompClient.connect({'Authorization': jwtToken}, function (frame) {
+        console.log('Connected: ' + frame);
+        stompClient.subscribe('/topic/subadmin/' + subAdminId + '/drivers', function (message) {
+            const driverData = JSON.parse(message.body);
+            updateDriverTable(driverData);
+        });
+    });
+
+    function updateDriverTable(driverData) {
+        const tableBody = document.querySelector('#driverTable tbody');
+        let row = tableBody.querySelector(`tr[data-id="${driverData.userId}"]`);
+        if (!row) {
+            row = document.createElement('tr');
+            row.setAttribute('data-id', driverData.userId);
+            row.innerHTML = `
+                <td>${driverData.userId}</td>
+                <td>${driverData.latitude}</td>
+                <td>${driverData.longitude}</td>
+                <td class="${driverData.status}">${driverData.status}</td>
+            `;
+            tableBody.appendChild(row);
+        } else {
+            row.cells[1].textContent = driverData.latitude;
+            row.cells[2].textContent = driverData.longitude;
+            row.cells[3].textContent = driverData.status;
+            row.cells[3].className = driverData.status;
+        }
+    }
+</script>
+</body>
+</html>

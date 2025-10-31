@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>TicTak - Devis</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; background-color: #f5f5f5; padding: 0; margin: 0;   }
+        .invoice-container { width: 100%; margin: 0 auto; background: white; position: relative; overflow: hidden; margin: 0;width: 100%; }
+        .header { background-size: cover; background-position: center; background-repeat: no-repeat; padding: 20px 40px 30px; height: 140px; position: relative; }
+        .logo-section { float: left; }
+        .logo-section img { height: 70px; width: auto; }
+        .title-section { float: right; text-align: right; margin-top: 25px; }
+        .title-section h1 { color: #cc0066; font-size: 48px; font-weight: bold; margin: 0 0 15px 0; }
+        .invoice-info { background: #cc0066; color: white; padding: 8px 15px; border-radius: 25px; font-size: 13px; white-space: nowrap; display: inline-block; }
+        .invoice-info span { margin: 0 25px; }
+        .invoice-info span:first-child { margin-left: 0; }
+        .invoice-info span:last-child { margin-right: 0; }
+        .clear { clear: both; }
+        .customer-info { padding: 25px 40px; border-bottom: 2px solid #e0e0e0; position: relative; }
+        .left-info { float: left; width: 60%; }
+        .right-info { float: right; width: 38%; }
+        .customer-info p { margin: 8px 0; font-size: 14px; color: #333; }
+        .customer-info strong { font-weight: 600; }
+        .items-table { width: 100%; border-collapse: collapse; margin: 0; }
+        .items-table thead { background: #0066ff; color: white; }
+        .items-table th { padding: 15px 40px; text-align: left; font-weight: bold; font-size: 15px; }
+        .qty-col { width: 15%; }
+        .desc-col { width: 85%; }
+        .items-table tbody tr { border-bottom: 1px solid #d0d0d0; }
+        .items-table tbody td { padding: 25px 40px; min-height: 60px; }
+        .footer-content { padding: 25px 40px; position: relative; }
+        .terms { float: left; width: 55%; }
+        .terms h3 { font-size: 15px; margin-bottom: 10px; font-weight: bold; }
+        .terms p { font-size: 11px; line-height: 1.6; color: #444; }
+        .pricing { float: right; width: 40%; }
+        .pricing p { margin: 10px 0; font-size: 14px; }
+        .pricing p:nth-child(2) { border-bottom: 1px solid #333; padding-bottom: 5px; }
+        .pricing strong { font-weight: 600; }
+        .signature { padding: 25px 40px 30px; position: relative; z-index: 10; }
+        .stamp-container { text-align: left; }
+        .stamp-container img { width: 80px; height: 80px; display: block; }
+        .signature-line { width: 150px; border-bottom: 1px solid #333; margin-top: 10px; margin-bottom: 5px; }
+        .director { font-size: 15px; font-weight: bold; }
+        .wave-footer { position: relative; width: 100%; height: 150px; background-size: cover; background-position: center; background-repeat: no-repeat; margin-top: -20px; }
+        @media print { body { background: white; padding: 0; } .invoice-container { max-width: 100%; } }
+    </style>
+</head>
+<body>
+<div class="invoice-container">
+    <!-- Header -->
+    <div class="header" th:style="|background-image: url('@{classpath:/static/images/wave-top.png}');|">
+        <div class="logo-section">
+            <img th:src="@{classpath:/static/images/logotiktak.png}" alt="TicTak Transport Logo"/>
+        </div>
+        <div class="title-section">
+            <h1>Devis</h1>
+            <div class="invoice-info">
+                <span>Réf : <span th:text="${moveRequest.ref}">TIC0123456789</span></span>
+                <span>Date : <span th:text="${#temporals.format(T(java.time.LocalDateTime).now(), 'dd/MM/yyyy')}">14/10/2025</span></span>
+            </div>
+        </div>
+        <div class="clear"></div>
+    </div>
+
+    <!-- Customer Info -->
+    <div class="customer-info">
+        <div class="left-info">
+            <p><strong>Nom :</strong> <span th:text="${moveRequest.client != null ? moveRequest.client.firstName + ' ' + moveRequest.client.lastName : 'N/A'}">Client</span></p>
+            <p><strong>Adresse de départ :</strong> <span th:text="${moveRequest.sourceAddress}">Source</span></p>
+            <p><strong>Adresse d'arrivée :</strong> <span th:text="${moveRequest.destinationAddress}">Destination</span></p>
+        </div>
+        <div class="right-info">
+            <p><strong>Tél :</strong> <span th:text="${moveRequest.client != null ? moveRequest.client.phoneNumber : 'N/A'}">+216 00 000 000</span></p>
+            <p><strong>Email :</strong> <span th:text="${moveRequest.clientEmail}">client@example.com</span></p>
+        </div>
+        <div class="clear"></div>
+    </div>
+
+    <!-- Items Table -->
+    <table class="items-table">
+        <thead>
+        <tr>
+            <th class="qty-col">Qté </th>
+            <th class="desc-col">Description </th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="item : ${moveRequest.items}">
+            <td th:text="${item.quantity}">1</td>
+            <td th:text="${item.itemLabel}">Déménagement complet</td>
+        </tr>
+        </tbody>
+    </table>
+
+    <!-- Footer -->
+    <div class="footer-content">
+        <div class="terms">
+            <h3>Conditions générales :</h3>
+            <p>Le client s'engage à être présent aux adresses et horaires convenus. Toute modification doit être signalée au moins 48 heures à l'avance.</p>
+        </div>
+        <div class="pricing">
+            <p><strong>Prix HT :</strong> <span th:text="${#numbers.formatDecimal(moveRequest.preCommissionCost, 0, 2) + ' €'}">1 615,00 €</span></p>
+            <p><strong>TVA (20%) :</strong> <span th:text="${#numbers.formatDecimal(moveRequest.preCommissionCost * 0.2, 0, 2) + ' €'}">323,00 €</span></p>
+            <p><strong>Prix TTC :</strong> <span th:text="${#numbers.formatDecimal(moveRequest.preCommissionCost * 1.2, 0, 2) + ' €'}">1 938,00 €</span></p>
+        </div>
+        <div class="clear"></div>
+    </div>
+
+    <!-- Signature -->
+    <div class="signature">
+        <div class="stamp-container">
+            <img th:src="@{classpath:/static/images/stamp.png}" alt="Stamp"/>
+            <div class="signature-line"></div>
+            <p class="director">Directeur</p>
+        </div>
+    </div>
+
+    <!-- Wave Footer -->
+    <div class="wave-footer" th:style="|background-image: url('@{classpath:/static/images/wave-bottom.png}');|"></div>
+</div>
+</body>
+</html>

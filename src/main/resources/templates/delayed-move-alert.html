@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="fr">
+<head>
+    <title>Alerte Déménagement en Attente</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body style="margin: 0; padding: 0; font-family: Arial, Helvetica, sans-serif; background-color: #E6F2FF;">
+<table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background-color: #E6F2FF; padding: 20px 0;">
+    <tr>
+        <td align="center">
+            <table role="presentation" width="600" cellspacing="0" cellpadding="0" style="background-color: #FFFFFF; border-radius: 8px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); overflow: hidden;">
+                <!-- Header -->
+                <tr>
+                    <td style="background-color: #067CE0; padding: 20px; text-align: center;">
+                        <h1 style="color: #FFFFFF; margin: 0; font-size: 24px;">Alerte Déménagement en Attente</h1>
+                    </td>
+                </tr>
+                <!-- Body -->
+                <tr>
+                    <td style="padding: 30px; text-align: center;">
+                        <p style="color: #747474; font-size: 16px; margin: 0;">Bonjour,</p>
+                        <p style="color: #747474; font-size: 16px; margin: 10px 0 0;">Un déménagement payé, référencé par l'ID <span style="color: #C30273;" th:text="${moveId}"></span>, est en attente depuis plus de 24 heures sans qu'un chauffeur n'ait été assigné. Cela indique que le paiement a été effectué par le client, mais la mission reste dans un état "<span th:text="${assignmentStatus}"></span>", ce qui peut affecter l'expérience client et la satisfaction. Veuillez examiner les détails ci-dessous et prendre les mesures nécessaires pour assigner un chauffeur dès que possible afin de garantir une résolution rapide.</p>                        <p style="color: #747474; font-size: 16px; margin: 10px 0 0;">Détails :</p>
+                        <div style="margin: 20px 0 0; background-color: #BDE1FF29; border: 2px solid #067CE04D; border-radius: 8px; padding: 20px; display: inline-block; text-align: left;">
+                            <p style="margin: 0; font-size: 16px;"><strong style="color: #067CE0;">ID :</strong> <span style="color: #C30273;" th:text="${moveId}"></span></p>
+                            <p style="margin: 10px 0 0; font-size: 16px;"><strong style="color: #067CE0;">Email Client :</strong> <span style="color: #C30273;" th:text="${clientEmail}"></span></p>
+                            <p style="margin: 10px 0 0; font-size: 16px;"><strong style="color: #067CE0;">Date de Paiement :</strong> <span style="color: #C30273;" th:text="${paymentDate}"></span></p>
+                            <p style="margin: 10px 0 0; font-size: 16px;"><strong style="color: #067CE0;">Adresse Source :</strong> <span style="color: #C30273;" th:text="${sourceAddress}"></span></p>
+                            <p style="margin: 10px 0 0; font-size: 16px;"><strong style="color: #067CE0;">Adresse Destination :</strong> <span style="color: #C30273;" th:text="${destinationAddress}"></span></p>
+                            <p style="margin: 10px 0 0; font-size: 16px;"><strong style="color: #067CE0;">Statut Assignation :</strong> <span style="color: #C30273;" th:text="${assignmentStatus}"></span></p>
+                        </div>
+                        <p style="color: #747474; font-size: 16px; margin: 20px 0 0;">Veuillez vérifier et assigner un chauffeur dès que possible.</p>
+                        <p style="color: #747474; font-size: 16px; margin: 20px 0 0;">Merci,</p>
+                        <p style="color: #747474; font-size: 16px; margin: 10px 0 0;">L'équipe TicTak</p>
+                    </td>
+                </tr>
+                <!-- Footer -->
+                <tr>
+                    <td style="background-color: #EFEFEF; padding: 15px; text-align: center;">
+                        <p style="color: #747474; font-size: 12px; margin: 0;">© 2025 TicTak. Tous droits réservés.</p>
+                        <p style="color: #78AC16; font-size: 12px; margin: 5px 0 0;">
+                            <a href="#" style="color: #78AC16; text-decoration: none;">Contacter le support</a>
+                        </p>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+</table>
+</body>
+</html>

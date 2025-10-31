@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Client Mission Sender</title>
+  <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1.5.2/dist/sockjs.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
+  <style>
+    #missionForm { margin: 20px; }
+    label { display: block; margin: 5px 0; }
+  </style>
+</head>
+<body>
+<h1>Send a Mission</h1>
+<div id="status">Connecting...</div>
+<div id="missionForm">
+  <label>Move ID: <input type="text" id="moveId" value="6901d94d-b970-416c-915d-857303d4feee"></label>
+  <label>Source Address: <input type="text" id="sourceAddress" value="123 Client St"></label>
+  <label>Destination Address: <input type="text" id="destinationAddress" value="456 Driver Ave"></label>
+  <button onclick="sendMission()">Send Mission</button>
+</div>
+<div id="missionStatus"></div>
+
+<script>
+  // Replace with actual client JWT token
+  const jwtToken = "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJyYWRod2VuNDRAZ21haWwuY29tIiwicm9sZXMiOlsiUk9MRV9DTElFTlQiXSwidXNlcklkIjoiNjdmZjcyNDBlNGRjYmUyNWMzMzA2MTAwIiwiaWF0IjoxNzQ1NDkzNjY3LCJleHAiOjE3NDU0OTcyNjd9.LP9AE7mm0glkYzoFChm0vlj9lvfG9c8KjqsrFiyfqpU";
+  const socket = new SockJS('http://localhost:8090/ws');
+  const stompClient = Stomp.over(socket);
+
+  stompClient.connect({'Authorization': jwtToken}, function (frame) {
+    document.getElementById('status').innerText = 'Connected';
+    console.log('Connected: ' + frame);
+
+    stompClient.subscribe('/user/radhwen44@gmail.com/queue/mission-details', function (message) {
+      console.log('Received mission details:', message.body);
+      const mission = JSON.parse(message.body);
+      document.getElementById('missionStatus').innerText = `Mission ${mission.moveId} accepted by driver: ${mission.driverEmail}`;
+    });
+  }, function (error) {
+    document.getElementById('status').innerText = 'Connection Error: ' + error;
+    console.error('Connection error:', error);
+  });
+
+  function sendMission() {
+    const moveId = document.getElementById('moveId').value;
+    const sourceAddress = document.getElementById('sourceAddress').value;
+    const destinationAddress = document.getElementById('destinationAddress').value;
+
+    const mission = {
+      moveId: moveId,
+      sourceAddress: sourceAddress,
+      destinationAddress: destinationAddress,
+      clientEmail: "radhwen44@gmail.com",
+      status: "OFFERED"
+    };
+
+    stompClient.send('/app/mission/offer', {}, JSON.stringify(mission));
+    console.log('Mission sent:', mission);
+    document.getElementById('missionStatus').innerText = `Mission ${moveId} sent, awaiting driver response...`;
+  }
+</script>
+</body>
+</html>

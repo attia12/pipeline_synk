@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Dynamic Truck GPS Map</title>
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <!-- SockJS and STOMP for WebSocket -->
+    <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1.5.0/dist/sockjs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
+    <style>
+        #map { height: 600px; width: 100%; }
+    </style>
+</head>
+<body>
+<div id="map"></div>
+
+<!-- Leaflet JavaScript -->
+<script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+<script>
+    // Initialize the Leaflet map
+    var map = L.map('map').setView([0, 0], 2);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map);
+
+    // Object to store truck markers
+    var markers = {};
+
+    // Function to update or add a truck marker
+    function updateMarker(truckId, lat, lon) {
+        if (markers[truckId]) {
+            markers[truckId].setLatLng([lat, lon]);
+        } else {
+            markers[truckId] = L.marker([lat, lon])
+                .addTo(map)
+                .bindPopup("Truck: " + truckId);
+        }
+    }
+
+    // Connect to the correct WebSocket endpoint
+    var socket = new SockJS('http://localhost:8090/ws');
+    var stompClient = Stomp.over(socket);
+    stompClient.connect({}, function (frame) {
+        console.log('Connected: ' + frame);
+        stompClient.subscribe('/topic/truck-locations', function (message) {
+            console.log('Received message:', message.body);
+            var truckData = JSON.parse(message.body);
+            updateMarker(truckData.truckId, truckData.latitude, truckData.longitude);
+        });
+    }, function (error) {
+        console.error('WebSocket error:', error);
+    });
+</script>
+</body>
+</html>

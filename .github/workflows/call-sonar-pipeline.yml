@@ -1,0 +1,32 @@
+##
+name: Calling The SonarQube Pipeline
+
+on:
+  push:
+  workflow_dispatch:
+    inputs:
+      # We only keep skip_tests for manual control
+      skip_tests:
+        description: 'Set to true to skip tests, false to run them.'
+        required: true
+        type: boolean
+        default: true
+
+jobs:
+  # -------------------------------------------------------------
+  # Job 1: Call Reusable Sonar Analysis Workflow
+  # -------------------------------------------------------------
+  sonar-pipeline:
+    name: Call SonarQube Pipeline
+    
+    # Calls the reusable workflow
+    uses: brama22/pipeline-template/.github/workflows/sonarqube-pipeline.yml@main
+    with:
+      project_key: ${{ github.event.repository.name }}
+      skip_tests: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.skip_tests || true }}
+      
+    secrets:
+      sonar_token: ${{ secrets.SONAR_TOKEN }}
+      
+    permissions:
+      contents: read

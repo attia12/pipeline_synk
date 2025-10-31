@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Driver 3 WebSocket Test</title>
+    <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1.5.2/dist/sockjs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
+    <style>
+        .notification {
+            background-color: #e7f3fe;
+            border-left: 6px solid #2196F3;
+            margin-bottom: 15px;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .notification h3 {
+            margin-top: 0;
+            color: #2196F3;
+        }
+        .notification p {
+            margin: 5px 0;
+        }
+    </style>
+    <script>
+        const driverId = "62ff782fa445871113f59fcf"; // Driver 1 ID
+        const token = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJtb2hhbWVkQGdtYWlsLmNvbSIsInJvbGVzIjpbIlJPTEVfRFJJVkVSIl0sInVzZXJJZCI6IjYyZmY3ODJmYTQ0NTg3MTExM2Y1OWZjZiIsImlhdCI6MTc0NzEyNjE0MiwiZXhwIjoxNzQ3MTYyMTQyfQ.2Hw7f5IABHZ_DLxWf6nCsQuBjSFdIhogAwWlghTypx4";
+
+        const socket = new SockJS('http://localhost:8090/ws');
+        const stompClient = Stomp.over(socket);
+
+        stompClient.connect({ 'Authorization': 'Bearer ' + token }, function(frame) {
+            console.log('Connected: ' + frame);
+            stompClient.subscribe('/topic/driver/status', function(message) {
+                console.log("Received status message: " + message.body);
+            });
+            stompClient.subscribe('/topic/driver/' + driverId, function(message) {
+                console.log("Received mission notification: ", message.body);
+                const mission = JSON.parse(message.body);
+                console.log("Parsed mission: ", mission);
+                const now = new Date().toLocaleString();
+                const notificationDiv = document.createElement('div');
+                notificationDiv.className = 'notification';
+                notificationDiv.innerHTML = `
+                   <h3>New Mission</h3>
+                        <p><strong>Received at:</strong> ${now}</p>
+                        <p><strong>Move ID:</strong> ${mission.moveId}</p>
+                        <p><strong>To:</strong> ${mission.destinationAddress}</p>
+                        <p><strong>Cost:</strong> ${mission.postCommissionCost}€</p>
+                        <p><strong>Duration:</strong> ${mission.durationInMinutes} minutes</p>
+                        <p><strong>Number of Products:</strong> ${mission.numberOfProducts}</p>
+                        <p><strong>Distance:</strong> ${mission.distanceInKm} km</p>
+                         <p><strong>Expires in:</strong> ${mission.remainingSeconds} seconds</p>
+                `;
+                document.getElementById('notification-list').appendChild(notificationDiv);
+            });
+        }, function(error) {
+            console.error("STOMP error: " + error);
+            setTimeout(function() {
+                stompClient.connect({ 'Authorization': 'Bearer ' + token }, function(frame) {
+                    console.log('Reconnected: ' + frame);
+                });
+            }, 5000);
+        });
+
+        setInterval(function() {
+            if (stompClient.connected) {
+                const locationUpdate = {
+                    type: "location",
+                    driverId: driverId,
+                    latitude: 46.868335029786856 + Math.random() * 0.000001,
+                    longitude: 2.3655909803206265 + Math.random() * 0.000001
+                };
+                stompClient.send("/app/driver/location", {}, JSON.stringify(locationUpdate));
+                console.log("Sent location update: " + JSON.stringify(locationUpdate));
+            } else {
+                console.log("STOMP client not connected, skipping location update");
+            }
+        }, 10000);
+    </script>
+</head>
+<body>
+<h1>Driver 3 WebSocket Test</h1>
+<p>Open the console (F12) to see logs and verify the driver's online status.</p>
+<div id="notifications">
+    <h2>Notifications</h2>
+    <div id="notification-list"></div>
+</div>
+</body>
+</html>

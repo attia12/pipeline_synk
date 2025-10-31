@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Client WebSocket Dashboard</title>
+  <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1.5.2/dist/sockjs.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
+  <style>
+    .notification {
+      background-color: #e7f3fe;
+      border-left: 6px solid #2196F3;
+      margin-bottom: 15px;
+      padding: 20px;
+      border-radius: 5px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    .notification h3 {
+      margin-top: 0;
+      color: #2196F3;
+    }
+    .notification p {
+      margin: 5px 0;
+    }
+    .update-section {
+      margin-top: 20px;
+      padding: 15px;
+      background-color: #f9f9f9;
+      border-radius: 5px;
+    }
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    h1 {
+      color: #333;
+    }
+  </style>
+  <script>
+    const clientId = "684afb946f6c58605f57cc4d";
+    const token = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJtb2hhbWVkLmFpY2hhb3VpQGV0dWRpYW50LWVuaXQudXRtLnRuIiwicm9sZXMiOlsiUk9MRV9DTElFTlQiXSwidXNlcklkIjoiNjg0YWZiOTQ2ZjZjNTg2MDVmNTdjYzRkIiwiZmlyc3ROYW1lIjoiTW9oYW1lZCIsImxhc3ROYW1lIjoiQWljaGFvdWkiLCJpYXQiOjE3NTEyNjg3NDQsImV4cCI6MTc1MTMwNDc0NH0.T_1fA3nND9MC9TkLYGZsrAQhwqumlh-t3LlheFLhGww";
+
+    const socket = new SockJS('http://localhost:8090/ws');
+    const stompClient = Stomp.over(socket);
+
+    stompClient.connect({ 'Authorization': 'Bearer ' + token }, function(frame) {
+      console.log('Connected to WebSocket: ' + frame);
+
+      stompClient.subscribe('/topic/client/' + clientId + '/mission', function(message) {
+        console.log("Notification received: ", message.body);
+        try {
+          const notification = JSON.parse(message.body);
+          const now = new Date().toLocaleString();
+          const notificationList = document.getElementById('notification-list');
+ 
+          const notificationDiv = document.createElement('div');
+          notificationDiv.className = 'notification';
+          notificationDiv.innerHTML = `
+                        <h3>${notification.title}</h3>
+                        <p><strong>Received at:</strong> ${now}</p>
+                        <p>${notification.body}</p>
+                        <p><strong>Move ID:</strong> ${notification.relatedMoveId}</p>
+                    `;
+          notificationList.appendChild(notificationDiv);
+
+          if (notification.title === "Mission acceptée") {
+            const moveId = notification.relatedMoveId;
+            console.log("Mission accepted, subscribing to updates for moveId: " + moveId);
+            subscribeToDriverUpdates(moveId);
+          }
+        } catch (error) {
+          console.error("Error parsing notification: ", error);
+        }
+      });
+    }, function(error) {
+      console.error("WebSocket connection error: " + error);
+      setTimeout(function() {
+        stompClient.connect({ 'Authorization': 'Bearer ' + token }, function(frame) {
+          console.log('Reconnected: ' + frame);
+        });
+      }, 5000);
+    });
+
+    function subscribeToDriverUpdates(moveId) {
+      console.log("Subscribing to driver updates for moveId: " + moveId);
+
+      stompClient.subscribe('/topic/mission/' + moveId + '/driverLocation', function(message) {
+        console.log("Driver location received: ", message.body);
+        try {
+          const location = JSON.parse(message.body);
+          const now = new Date().toLocaleString();
+          document.getElementById('driver-location').innerHTML = `
+                        <strong>Driver Location (Updated at ${now}):</strong> Latitude: ${location.latitude}, Longitude: ${location.longitude}
+                    `;
+        } catch (error) {
+          console.error("Error parsing location update: ", error);
+        }
+      });
+
+      stompClient.subscribe('/topic/mission/' + moveId + '/status', function(message) {
+        console.log("Mission status received: ", message.body);
+        try {
+          const status = message.body;
+          const now = new Date().toLocaleString();
+          document.getElementById('mission-status').innerHTML = `
+                        <strong>Mission Status (Updated at ${now}):</strong> ${status}
+                    `;
+        } catch (error) {
+          console.error("Error parsing status update: ", error);
+        }
+      });
+    }
+  </script>
+</head>
+<body>
+<h1>Client Dashboard</h1>
+<p>Welcome, cher client! Monitor your mission updates below. Open the console (F12) to see logs.</p>
+<div id="notifications">
+  <h2>Notifications</h2>
+  <div id="notification-list"></div>
+</div>
+<div class="update-section">
+  <h2>Driver Updates</h2>
+  <div id="driver-location">
+    <strong>Driver Location:</strong> Waiting for updates...
+  </div>
+  <div id="mission-status">
+    <strong>Mission Status:</strong> Waiting for updates...
+  </div>
+</div>
+</body>
+</html>

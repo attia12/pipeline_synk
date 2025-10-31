@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Driver Location Tracker</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1.5.2/dist/sockjs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
+    <style>
+        #map { height: 600px; width: 100%; }
+    </style>
+</head>
+<body>
+<h1>Driver Location Tracker</h1>
+<div id="map"></div>
+
+<script>
+    const map = L.map('map').setView([48.8566, 2.3522], 13);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map);
+
+    const markers = {};
+
+    const socket = new SockJS('http://localhost:8090/ws');
+    const stompClient = Stomp.over(socket);
+    const jwtToken = "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbkBleGFtcGxlLmNvbSIsInJvbGVzIjpbIlJPTEVfQURNSU4iXSwidXNlcklkIjoiNjdmZjcwZmRlNGRjYmUyNWMzMzA2MGZkIiwiaWF0IjoxNzQ1NTg4MzEwLCJleHAiOjE3NDU1OTE5MTB9.Pu2-S8Kfy_nJJ1_uK3AnXdKYSjGHSjmVVImHYgJeHdg"; // Replace with a valid admin/user JWT token
+
+    stompClient.connect({'Authorization': jwtToken}, function (frame) {
+        console.log('Connected: ' + frame);
+        stompClient.subscribe('/topic/drivers/location', function (message) {
+            console.log('Received:', message.body);
+            const data = JSON.parse(message.body);
+            const driverId = data.userId;
+            const lat = data.latitude;
+            const lon = data.longitude;
+            const status = data.status;
+
+            if (typeof lat !== 'number' || typeof lon !== 'number' || lat < -90 || lat > 90 || lon < -180 || lon > 180) {
+                console.error('Invalid coordinates:', lat, lon);
+                return;
+            }
+
+            if (status === 'online') {
+                if (markers[driverId]) {
+                    markers[driverId].setLatLng([lat, lon]);
+                } else {
+                    markers[driverId] = L.marker([lat, lon]).addTo(map)
+                        .bindPopup(`Driver: ${driverId}<br>Status: ${status}`);
+                }
+            } else if (status === 'offline' && markers[driverId]) {
+                map.removeLayer(markers[driverId]);
+                delete markers[driverId];
+            }
+        });
+    }, function (error) {
+        console.error('Connection error: ', error);
+    });
+</script>
+</body>
+</html>

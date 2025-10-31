@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Driver Location Sender</title>
+    <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1.5.2/dist/sockjs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
+</head>
+<body>
+<h1>Driver Location Sender</h1>
+<label for="latitude">Latitude:</label>
+<input type="text" id="latitude" value="48.8584"><br>
+<label for="longitude">Longitude:</label>
+<input type="text" id="longitude" value="2.2945"><br>
+<button id="connectDriver">Connect Driver</button>
+<button id="sendLocation">Send Location Update</button>
+<button id="disconnectDriver">Disconnect Driver</button>
+
+<script>
+    const socket = new SockJS('http://localhost:8090/ws');
+    const stompClient = Stomp.over(socket);
+    const jwtToken = "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJzc2suZmZ0dEBnbWFpbC5jb20iLCJyb2xlcyI6WyJST0xFX0RSSVZFUiJdLCJ1c2VySWQiOiI2N2ZmNzdhMGE0NDU4NzExMTNmNTlmY2UiLCJpYXQiOjE3NDU4NDY4NjIsImV4cCI6MTc0NTg1MDQ2Mn0.UZhaiA0M2jHRpi6yRbRfSSs0inKouDv8wFnJRenzknk";
+    const driverId = "67ff77a0a445871113f59fce";
+    const apiBaseUrl = "http://localhost:8090/api/driver";
+
+    // WebSocket connection (optional fallback)
+    stompClient.connect({'Authorization': jwtToken}, function (frame) {
+        console.log('WebSocket Connected: ' + frame);
+    }, function (error) {
+        console.error('WebSocket Connection error: ', error);
+    });
+
+    // Connect Driver via REST
+    document.getElementById('connectDriver').addEventListener('click', function() {
+        const lat = parseFloat(document.getElementById('latitude').value);
+        const lon = parseFloat(document.getElementById('longitude').value);
+        if (!isNaN(lat) && !isNaN(lon)) {
+            fetch(`${apiBaseUrl}/${driverId}/online`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': jwtToken
+                },
+                body: JSON.stringify({ latitude: lat, longitude: lon })
+            })
+                .then(response => response.text())
+                .then(data => console.log(data))
+                .catch(error => console.error('Error connecting driver:', error));
+
+            // Optional: Send via WebSocket as well
+            stompClient.send("/app/driver/connect", {}, JSON.stringify({
+                latitude: lat,
+                longitude: lon
+            }));
+            console.log(`Driver ${driverId} connected: Lat=${lat}, Lon=${lon}`);
+        } else {
+            console.error('Invalid latitude or longitude');
+        }
+    });
+
+    // Send Location Update via REST
+    document.getElementById('sendLocation').addEventListener('click', function() {
+        const lat = parseFloat(document.getElementById('latitude').value);
+        const lon = parseFloat(document.getElementById('longitude').value);
+        if (!isNaN(lat) && !isNaN(lon)) {
+            fetch(`${apiBaseUrl}/${driverId}/update-location`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': jwtToken
+                },
+                body: JSON.stringify({ latitude: lat, longitude: lon })
+            })
+                .then(response => response.text())
+                .then(data => console.log(data))
+                .catch(error => console.error('Error updating location:', error));
+
+            // Optional: Send via WebSocket as well
+            stompClient.send("/app/driver/update-location", {}, JSON.stringify({
+                latitude: lat,
+                longitude: lon
+            }));
+            console.log(`Location update sent for Driver ${driverId}: Lat=${lat}, Lon=${lon}`);
+        } else {
+            console.error('Invalid latitude or longitude');
+        }
+    });
+
+    // Disconnect Driver via REST
+    document.getElementById('disconnectDriver').addEventListener('click', function() {
+        fetch(`${apiBaseUrl}/${driverId}/offline`, {
+            method: 'POST',
+            headers: {
+                'Authorization': jwtToken
+            }
+        })
+            .then(response => response.text())
+            .then(data => console.log(data))
+            .catch(error => console.error('Error disconnecting driver:', error));
+        console.log(`Driver ${driverId} disconnected`);
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Itineraries Map</title>
+    <style>
+        #map {
+            height: 80vh;
+            width: 100%;
+        }
+        body {
+            font-family: Arial, sans-serif;
+        }
+        #controls {
+            margin: 10px;
+        }
+        #itinerary-list {
+            margin: 10px;
+        }
+        .itinerary {
+            margin-bottom: 10px;
+            padding: 5px;
+            border: 1px solid #ccc;
+        }
+    </style>
+</head>
+<body>
+    <h2>Itineraries Map</h2>
+    <div id="controls">
+        Start City: <input type="text" id="start" value="Paris">
+        End City: <input type="text" id="end" value="Lyon">
+        <button onclick="loadItineraries()">Show Itineraries</button>
+    </div>
+    <div id="itinerary-list"></div>
+    <div id="map"></div>
+
+    <script>
+        let map;
+        let markers = [];
+        let polylines = [];
+        let colors = ["#FF0000", "#0000FF", "#00FF00", "#FFA500", "#800080"];
+
+        function initMap() {
+            map = new google.maps.Map(document.getElementById("map"), {
+                center: { lat: 48.8566, lng: 2.3522 },
+                zoom: 6
+            });
+        }
+
+        async function loadItineraries() {
+            const start = document.getElementById("start").value;
+            const end = document.getElementById("end").value;
+            const apiUrl = `http://localhost:8090/api/moves/itineraries?start=${encodeURIComponent(start)}&end=${encodeURIComponent(end)}`;
+
+            // Clear previous markers and polylines
+            markers.forEach(m => m.setMap(null));
+            markers = [];
+            polylines.forEach(l => l.setMap(null));
+            polylines = [];
+            document.getElementById("itinerary-list").innerHTML = "";
+
+            try {
+                const response = await fetch(apiUrl);
+                const data = await response.json();
+
+                data.forEach((itinerary, index) => {
+                    const div = document.createElement("div");
+                    div.className = "itinerary";
+                    div.innerHTML = `<strong>Itinerary ${index + 1}:</strong> ${itinerary.cities.join(" → ")}`;
+                    document.getElementById("itinerary-list").appendChild(div);
+
+                    // Draw polyline and markers using coordinates
+                    const path = itinerary.coordinates.map(c => ({ lat: c.lat, lng: c.lng }));
+                    const polyline = new google.maps.Polyline({
+                        path: path,
+                        geodesic: true,
+                        strokeColor: colors[index % colors.length],
+                        strokeOpacity: 0.7,
+                        strokeWeight: 4,
+                        map: map
+                    });
+                    polylines.push(polyline);
+
+                    // Add markers
+                    path.forEach((pos, i) => {
+                        const marker = new google.maps.Marker({
+                            position: pos,
+                            map: map,
+                            title: itinerary.cities[i] || ''
+                        });
+                        markers.push(marker);
+                    });
+
+                    // Adjust map to fit all points
+                    const bounds = new google.maps.LatLngBounds();
+                    path.forEach(p => bounds.extend(p));
+                    map.fitBounds(bounds);
+                });
+            } catch (err) {
+                console.error(err);
+                alert("Failed to load itineraries. Make sure your backend is running and CORS is enabled.");
+            }
+        }
+    </script>
+
+    <script async
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB-8aKX-XYXViymbfZvUKfmHrbq3CfaLL8&callback=initMap">
+    </script>
+</body>
+</html>

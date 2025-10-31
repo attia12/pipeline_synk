@@ -1,0 +1,16 @@
+package fr.tictak.dema.model.enums;
+
+public enum DocumentType {
+    ATTESTATION_CAPACITE,
+    KBIS,
+    ASSURANCE_TRANSPORT,
+    IDENTITY_PROOF,
+    ATTESTATION_VIGILANCE,
+    CARTE_GRISE,
+    ASSURANCE_CAMION,
+    PERMIS_CONDUIRE,
+    PHOTO_CAMION,
+    ATTESTATION_REGULARITE_FISCALE,
+    DPAE,
+    TAXE
+}

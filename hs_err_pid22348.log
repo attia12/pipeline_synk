@@ -1,0 +1,241 @@
+#
+# There is insufficient memory for the Java Runtime Environment to continue.
+# Native memory allocation (mmap) failed to map 536870912 bytes. Error detail: G1 virtual space
+# Possible reasons:
+#   The system is out of physical RAM or swap space
+#   This process is running with CompressedOops enabled, and the Java Heap may be blocking the growth of the native heap
+# Possible solutions:
+#   Reduce memory load on the system
+#   Increase physical memory or swap space
+#   Check if swap backing store is full
+#   Decrease Java heap size (-Xmx/-Xms)
+#   Decrease number of Java threads
+#   Decrease Java thread stack sizes (-Xss)
+#   Set larger code cache with -XX:ReservedCodeCacheSize=
+#   JVM is running with Zero Based Compressed Oops mode in which the Java heap is
+#     placed in the first 32GB address space. The Java Heap base address is the
+#     maximum limit for the native heap growth. Please use -XX:HeapBaseMinAddress
+#     to set the Java Heap base and to place the Java Heap above 32GB virtual address.
+# This output file may be truncated or incomplete.
+#
+#  Out of Memory Error (os_windows.cpp:3713), pid=22348, tid=26052
+#
+# JRE version:  (21.0.8+9) (build )
+# Java VM: OpenJDK 64-Bit Server VM (21.0.8+9-LTS, mixed mode, sharing, tiered, compressed oops, compressed class ptrs, g1 gc, windows-amd64)
+# No core dump will be written. Minidumps are not enabled by default on client versions of Windows
+#
+
+---------------  S U M M A R Y ------------
+
+Command Line: -javaagent:C:\Program Files\JetBrains\IntelliJ IDEA Community Edition 2025.2.3\lib\idea_rt.jar=51978 -Dfile.encoding=UTF-8 -Dsun.stdout.encoding=UTF-8 -Dsun.stderr.encoding=UTF-8 fr.tictak.dema.DemaApplication
+
+Host: 12th Gen Intel(R) Core(TM) i5-12400F, 12 cores, 31G,  Windows 10 , 64 bit Build 19041 (10.0.19041.5915)
+Time: Thu Oct 23 09:52:41 2025 Paris, Madrid elapsed time: 0.007392 seconds (0d 0h 0m 0s)
+
+---------------  T H R E A D  ---------------
+
+Current thread (0x000001b2ace8b580):  JavaThread "Unknown thread" [_thread_in_vm, id=26052, stack(0x0000007c7ce00000,0x0000007c7cf00000) (1024K)]
+
+Stack: [0x0000007c7ce00000,0x0000007c7cf00000]
+Native frames: (J=compiled Java code, j=interpreted, Vv=VM code, C=native code)
+V  [jvm.dll+0x6deaf9]
+V  [jvm.dll+0x8bccc3]
+V  [jvm.dll+0x8bf07e]
+V  [jvm.dll+0x8bf763]
+V  [jvm.dll+0x287836]
+V  [jvm.dll+0x6db315]
+V  [jvm.dll+0x6ced8a]
+V  [jvm.dll+0x361ecb]
+V  [jvm.dll+0x369a96]
+V  [jvm.dll+0x3bbe66]
+V  [jvm.dll+0x3bc138]
+V  [jvm.dll+0x3356ac]
+V  [jvm.dll+0x33639b]
+V  [jvm.dll+0x884fd9]
+V  [jvm.dll+0x3c9021]
+V  [jvm.dll+0x86e203]
+V  [jvm.dll+0x45cfae]
+V  [jvm.dll+0x45ec31]
+C  [jli.dll+0x52ab]
+C  [ucrtbase.dll+0x21bb2]
+C  [KERNEL32.DLL+0x17374]
+C  [ntdll.dll+0x4cc91]
+
+
+---------------  P R O C E S S  ---------------
+
+Threads class SMR info:
+_java_thread_list=0x00007ffb31d01188, length=0, elements={
+}
+
+Java Threads: ( => current thread )
+Total: 0
+
+Other Threads:
+  0x000001b2cea40b90 WorkerThread "GC Thread#0"                     [id=27924, stack(0x0000007c7cf00000,0x0000007c7d000000) (1024K)]
+  0x000001b2acf048e0 ConcurrentGCThread "G1 Main Marker"            [id=3316, stack(0x0000007c7d000000,0x0000007c7d100000) (1024K)]
+  0x000001b2acf05a90 WorkerThread "G1 Conc#0"                       [id=21464, stack(0x0000007c7d100000,0x0000007c7d200000) (1024K)]
+
+[error occurred during error reporting (printing all threads), id 0xc0000005, EXCEPTION_ACCESS_VIOLATION (0xc0000005) at pc=0x00007ffb313f8677]
+VM state: not at safepoint (not fully initialized)
+
+VM Mutex/Monitor currently owned by a thread:  ([mutex/lock_event])
+[0x00007ffb31d754f8] Heap_lock - owner thread: 0x000001b2ace8b580
+
+Heap address: 0x0000000602c00000, size: 8148 MB, Compressed Oops mode: Zero based, Oop shift amount: 3
+
+CDS archive(s) mapped at: [0x0000000000000000-0x0000000000000000-0x0000000000000000), size 0, SharedBaseAddress: 0x0000000800000000, ArchiveRelocationMode: 1.
+Narrow klass base: 0x0000000000000000, Narrow klass shift: 0, Narrow klass range: 0x0
+
+GC Precious Log:
+ CardTable entry size: 512
+ Card Set container configuration: InlinePtr #cards 4 size 8 Array Of Cards #cards 32 size 80 Howl #buckets 8 coarsen threshold 7372 Howl Bitmap #cards 1024 size 144 coarsen threshold 921 Card regions per heap region 1 cards per card region 8192
+
+Heap:
+ garbage-first heap   total 0K, used 0K [0x0000000602c00000, 0x0000000800000000)
+  region size 4096K, 0 young (0K), 0 survivors (0K)
+
+[error occurred during error reporting (printing heap information), id 0xc0000005, EXCEPTION_ACCESS_VIOLATION (0xc0000005) at pc=0x00007ffb317e82f9]
+GC Heap History (0 events):
+No events
+
+Dll operation events (1 events):
+Event: 0.005 Loaded shared library C:\Users\Youssef\.jdks\corretto-21.0.8\bin\java.dll
+
+Deoptimization events (0 events):
+No events
+
+Classes loaded (0 events):
+No events
+
+Classes unloaded (0 events):
+No events
+
+Classes redefined (0 events):
+No events
+
+Internal exceptions (0 events):
+No events
+
+ZGC Phase Switch (0 events):
+No events
+
+VM Operations (0 events):
+No events
+
+Memory protections (0 events):
+No events
+
+Nmethod flushes (0 events):
+No events
+
+Events (0 events):
+No events
+
+
+Dynamic libraries:
+0x00007ff64c610000 - 0x00007ff64c61e000 	C:\Users\Youssef\.jdks\corretto-21.0.8\bin\java.exe
+0x00007ffbb1250000 - 0x00007ffbb1448000 	C:\Windows\SYSTEM32\ntdll.dll
+0x00007ffbb02d0000 - 0x00007ffbb0392000 	C:\Windows\System32\KERNEL32.DLL
+0x00007ffbaec40000 - 0x00007ffbaef36000 	C:\Windows\System32\KERNELBASE.dll
+0x00007ffbae8f0000 - 0x00007ffbae9f0000 	C:\Windows\System32\ucrtbase.dll
+0x00007ffb97180000 - 0x00007ffb9719b000 	C:\Users\Youssef\.jdks\corretto-21.0.8\bin\VCRUNTIME140.dll
+0x00007ffb94bb0000 - 0x00007ffb94bc8000 	C:\Users\Youssef\.jdks\corretto-21.0.8\bin\jli.dll
+0x00007ffbafa20000 - 0x00007ffbafbbd000 	C:\Windows\System32\USER32.dll
+0x00007ffba5170000 - 0x00007ffba540b000 	C:\Windows\WinSxS\amd64_microsoft.windows.common-controls_6595b64144ccf1df_6.0.19041.6280_none_60bc30a171f2f3f3\COMCTL32.dll
+0x00007ffbaf250000 - 0x00007ffbaf272000 	C:\Windows\System32\win32u.dll
+0x00007ffbb1080000 - 0x00007ffbb111e000 	C:\Windows\System32\msvcrt.dll
+0x00007ffbafc80000 - 0x00007ffbafcab000 	C:\Windows\System32\GDI32.dll
+0x00007ffbaf130000 - 0x00007ffbaf249000 	C:\Windows\System32\gdi32full.dll
+0x00007ffbaeb50000 - 0x00007ffbaebed000 	C:\Windows\System32\msvcp_win.dll
+0x00007ffbb08e0000 - 0x00007ffbb090f000 	C:\Windows\System32\IMM32.DLL
+0x00007ffb9d4f0000 - 0x00007ffb9d4fc000 	C:\Users\Youssef\.jdks\corretto-21.0.8\bin\vcruntime140_1.dll
+0x00007ffb7fbc0000 - 0x00007ffb7fc4d000 	C:\Users\Youssef\.jdks\corretto-21.0.8\bin\msvcp140.dll
+0x00007ffb310b0000 - 0x00007ffb31e57000 	C:\Users\Youssef\.jdks\corretto-21.0.8\bin\server\jvm.dll
+0x00007ffbafde0000 - 0x00007ffbafe91000 	C:\Windows\System32\ADVAPI32.dll
+0x00007ffbaf6b0000 - 0x00007ffbaf74f000 	C:\Windows\System32\sechost.dll
+0x00007ffbaf750000 - 0x00007ffbaf870000 	C:\Windows\System32\RPCRT4.dll
+0x00007ffbaef40000 - 0x00007ffbaef67000 	C:\Windows\System32\bcrypt.dll
+0x00007ffbafd70000 - 0x00007ffbafddb000 	C:\Windows\System32\WS2_32.dll
+0x00007ffbade40000 - 0x00007ffbade8b000 	C:\Windows\SYSTEM32\POWRPROF.dll
+0x00007ffba89b0000 - 0x00007ffba89ba000 	C:\Windows\SYSTEM32\VERSION.dll
+0x00007ffba2e50000 - 0x00007ffba2e77000 	C:\Windows\SYSTEM32\WINMM.dll
+0x00007ffbadcb0000 - 0x00007ffbadcc2000 	C:\Windows\SYSTEM32\UMPDC.dll
+0x00007ffbac750000 - 0x00007ffbac762000 	C:\Windows\SYSTEM32\kernel.appcore.dll
+0x00007ffb94ba0000 - 0x00007ffb94baa000 	C:\Users\Youssef\.jdks\corretto-21.0.8\bin\jimage.dll
+0x00007ffba24c0000 - 0x00007ffba26c1000 	C:\Windows\SYSTEM32\DBGHELP.DLL
+0x00007ffb9e300000 - 0x00007ffb9e334000 	C:\Windows\SYSTEM32\dbgcore.DLL
+0x00007ffbaf0a0000 - 0x00007ffbaf122000 	C:\Windows\System32\bcryptPrimitives.dll
+0x00007ffb91780000 - 0x00007ffb9178e000 	C:\Users\Youssef\.jdks\corretto-21.0.8\bin\instrument.dll
+0x00007ffb918a0000 - 0x00007ffb918bf000 	C:\Users\Youssef\.jdks\corretto-21.0.8\bin\java.dll
+
+JVMTI agents:
+C:\Program Files\JetBrains\IntelliJ IDEA Community Edition 2025.2.3\lib\idea_rt.jar path:none, loaded, not initialized, instrumentlib options:51978
+
+dbghelp: loaded successfully - version: 4.0.5 - missing functions: none
+symbol engine: initialized successfully - sym options: 0x614 - pdb path: .;C:\Users\Youssef\.jdks\corretto-21.0.8\bin;C:\Windows\SYSTEM32;C:\Windows\WinSxS\amd64_microsoft.windows.common-controls_6595b64144ccf1df_6.0.19041.6280_none_60bc30a171f2f3f3;C:\Users\Youssef\.jdks\corretto-21.0.8\bin\server
+
+VM Arguments:
+jvm_args: -javaagent:C:\Program Files\JetBrains\IntelliJ IDEA Community Edition 2025.2.3\lib\idea_rt.jar=51978 -Dfile.encoding=UTF-8 -Dsun.stdout.encoding=UTF-8 -Dsun.stderr.encoding=UTF-8 
+java_command: fr.tictak.dema.DemaApplication
+java_class_path (initial): C:\Users\Youssef\Documents\tictak api\target\classes;C:\Users\Youssef\.m2\repository\org\springframework\boot\spring-boot-starter-data-mongodb\3.4.2\spring-boot-starter-data-mongodb-3.4.2.jar;C:\Users\Youssef\.m2\repository\org\springframework\boot\spring-boot-starter\3.4.2\spring-boot-starter-3.4.2.jar;C:\Users\Youssef\.m2\repository\org\springframework\boot\spring-boot-starter-logging\3.4.2\spring-boot-starter-logging-3.4.2.jar;C:\Users\Youssef\.m2\repository\ch\qos\logback\logback-classic\1.5.16\logback-classic-1.5.16.jar;C:\Users\Youssef\.m2\repository\ch\qos\logback\logback-core\1.5.16\logback-core-1.5.16.jar;C:\Users\Youssef\.m2\repository\org\apache\logging\log4j\log4j-to-slf4j\2.24.3\log4j-to-slf4j-2.24.3.jar;C:\Users\Youssef\.m2\repository\org\apache\logging\log4j\log4j-api\2.24.3\log4j-api-2.24.3.jar;C:\Users\Youssef\.m2\repository\org\slf4j\jul-to-slf4j\2.0.16\jul-to-slf4j-2.0.16.jar;C:\Users\Youssef\.m2\repository\jakarta\annotation\jakarta.annotation-api\2.1.1\jakarta.annotation-api-2.1.1.jar;C:\Users\Youssef\.m2\repository\org\yaml\snakeyaml\2.3\snakeyaml-2.3.jar;C:\Users\Youssef\.m2\repository\org\mongodb\mongodb-driver-sync\5.2.1\mongodb-driver-sync-5.2.1.jar;C:\Users\Youssef\.m2\repository\org\mongodb\bson\5.2.1\bson-5.2.1.jar;C:\Users\Youssef\.m2\repository\org\mongodb\mongodb-driver-core\5.2.1\mongodb-driver-core-5.2.1.jar;C:\Users\Youssef\.m2\repository\org\mongodb\bson-record-codec\5.2.1\bson-record-codec-5.2.1.jar;C:\Users\Youssef\.m2\repository\org\springframework\data\spring-data-mongodb\4.4.2\spring-data-mongodb-4.4.2.jar;C:\Users\Youssef\.m2\repository\org\springframework\spring-tx\6.2.2\spring-tx-6.2.2.jar;C:\Users\Youssef\.m2\repository\org\springframework\spring-context\6.2.2\spring-context-6.2.2.jar;C:\Users\Youssef\.m2\repository\org\springframework\spring-beans\6.2.2\spring-beans-6.2.2.jar;C:\Users\Youssef\.m2\repository\org\springframework\spring-expression\6.2.2\spring-expression-6.2.2.jar;C:\Users\Youssef\.m2\repository\org\springframework\data\spring-data-commons\3.4.2\spring-data-commons-3.4.2.jar;C:\Users\Youssef\.m2\repository\org\springframework\boot\spring-boot-starter-web\3.4.2\spring-boot-starter-web-3.4.2.jar;C:\Users\Youssef\.m2\repository\org\springframework\boot\spring-boot-starter-json\3.4.2\spring-boot-starter-json-3.4.2.jar;C:\Users\Youssef\.m2\repository\com\fasterxml\jackson\datatype\jackson-datatype-jdk8\2.18.2\jackson-datatype-jdk8-2.18.2.jar;C:\Users\Youssef\.m2\repository\com\fasterxml\jackson\datatype\jackson-datatype-jsr310\2.18.2\jackson-datatype-jsr310-2.18.2.jar;C:\Users\Youssef\.m2\repository\com\fasterxml\jackson\module\jackson-module-parameter-names\2.18.2\jackson-module-parameter-names-2.18.2.jar;C:\Users\Youssef\.m2\repository\org\springframework\boot\spring-boot-starter-tomcat\3.4.2\spring-boot-starter-tomcat-3.4.2.jar;C:\Users\Youssef\.m2\repository\org\apache\tomcat\embed\tomcat-embed-core\10.1.34\tomcat-embed-core-10.1.34.jar;C:\Users\Youssef\.m2\repository\org\apache\tomcat\embed\tomcat-embed-websocket\10.1.34\tomcat-embed-websocket-10.1.34.jar;C:\Users\Youssef\.m2\repository\org\springframework\spring-web\6.2.2\spring-web-6.2.2.jar;C:\Users\Youssef\.m2\repository\org\springframework\spring-webmvc\6.2.2\spring-webmvc-6.2.2.jar;C:\Users\Youssef\.m2\repository\org\json\json\20250107\json-20250107.jar;C:\Users\Youssef\.m2\repository\com\stripe\stripe-java\29.0.0\stripe-java-29.0.0.jar;C:\Users\Youssef\.m2\repository\com\google\code\gson\gson\2.11.0\gson-2.11.0.jar;C:\Users\Youssef\.m2\repository\com\google\errorprone\error_prone_annotations\2.27.0\error_prone_annotations-2.27.0.jar;C:\Users\Youssef\.m2\repository\com\google\maps\google-maps-services\2.1.2\google-maps-services-2.1.2.jar;C:\Users\Youssef\.m2\repository\com\squareup\okhttp3\okhttp\4.10.0\okhttp-4.10.0.jar;C:\Users\Youssef\.m2\repository\com\squareup\okio\okio-jvm\3.0.0\okio-jvm-3.0.0.jar;C:\Users\Youssef\.m2\repository\org\jetbrains\kotlin\kotlin-stdlib-jdk8\1.9.25\kotlin-stdlib-jdk8-1.9.25.jar;C:\Users\Youssef\.m2\repository\org\jetbrains\kotlin\kotlin-stdlib-jdk7\1.9.25\kotlin-stdlib-jdk7-1.9.25.jar;C:\Users\Youssef\.m2\repository\org\jetbrains\kotlin\kotlin-stdlib-common\1.9.25\kotlin-stdlib-common-1.9.25.jar;C:\Users\Youssef\.m2\repository\org\jetbrains\kotlin\kotlin-stdlib\1.9.25\kotlin-stdlib-1.9.25.jar;C:\Users\Youssef\.m2\repository\org\jetbrains\annotations\13.0\annotations-13.0.jar;C:\Users\Youssef\.m2\repository\io\opencensus\opencensus-api\0.31.0\opencensus-api-0.31.0.jar;C:\Users\Youssef\.m2\repository\io\grpc\grpc-context\1.27.2\grpc-context-1.27.2.jar;C:\Users\Youssef\.m2\repository\org\springframework\boot\spring-boot-devtools\3.4.2\spring-boot-devtools-3.4.2.jar;C:\Users\Youssef\.m2\repository\org\springframework\boot\spring-boot\3.4.2\spring-boot-3.4.2.jar;C:\Users\Youssef\.m2\repository\org\springframework\boot\spring-boot-autoconfigure\3.4.2\spring-boot-autoconfigure-3.4.2.jar;C:\Users\Youssef\.m2\repository\org\springdoc\springdoc-openapi-starter-webmvc-ui\2.7.0\springdoc-openapi-starter-webmvc-ui-2.7.0.jar;C:\Users\Youssef\.m2\repository\org\springdoc\springdoc-openapi-starter-webmvc-api\2.7.0\springdoc-openapi-starter-webmvc-api-2.7.0.jar;C:\Users\Youssef\.m2\repository\org\springdoc\springdoc-openapi-starter-common\2.7.0\springdoc-openapi-starter-common-2.7.0.jar;C:\Users\Youssef\.m2\repository\io\swagger\core\v3\swagger-core-jakarta\2.2.25\swagger-core-jakarta-2.2.25.jar;C:\Users\Youssef\.m2\repository\org\apache\commons\commons-lang3\3.17.0\commons-lang3-3.17.0.jar;C:\Users\Youssef\.m2\repository\io\swagger\core\v3\swagger-annotations-jakarta\2.2.25\swagger-annotations-jakarta-2.2.25.jar;C:\Users\Youssef\.m2\repository\io\swagger\core\v3\swagger-models-jakarta\2.2.25\swagger-models-jakarta-2.2.25.jar;C:\Users\Youssef\.m2\repository\com\fasterxml\jackson\dataformat\jackson-dataformat-yaml\2.18.2\jackson-dataformat-yaml-2.18.2.jar;C:\Users\Youssef\.m2\repository\org\webjars\swagger-ui\5.18.2\swagger-ui-5.18.2.jar;C:\Users\Youssef\.m2\repository\org\webjars\webjars-locator-lite\1.0.1\webjars-locator-lite-1.0.1.jar;C:\Users\Youssef\.m2\repository\org\jspecify\jspecify\1.0.0\jspecify-1.0.0.jar;C:\Users\Youssef\.m2\repository\com\bucket4j\bucket4j-core\8.1.0\bucket4j-core-8.1.0.jar;C:\Users\Youssef\.m2\repository\org\springframework\boot\spring-boot-starter-security\3.4.4\spring-boot-starter-security-3.4.4.jar;C:\Users\Youssef\.m2\repository\org\springframework\spring-aop\6.2.2\spring-aop-6.2.2.jar;C:\Users\Youssef\.m2\repository\org\springframework\security\spring-security-config\6.4.2\spring-security-config-6.4.2.jar;C:\Users\Youssef\.m2\repository\org\springframework\security\spring-security-core\6.4.2\spring-security-core-6.4.2.jar;C:\Users\Youssef\.m2\repository\org\springframework\security\spring-security-crypto\6.4.2\spring-security-crypto-6.4.2.jar;C:\Users\Youssef\.m2\repository\org\springframework\security\spring-security-web\6.4.2\spring-security-web-6.4.2.jar;C:\Users\Youssef\.m2\repository\io\jsonwebtoken\jjwt-jackson\0.11.5\jjwt-jackson-0.11.5.jar;C:\Users\Youssef\.m2\repository\io\jsonwebtoken\jjwt-api\0.11.5\jjwt-api-0.11.5.jar;C:\Users\Youssef\.m2\repository\io\jsonwebtoken\jjwt-impl\0.11.5\jjwt-impl-0.11.5.jar;C:\Users\Youssef\.m2\repository\org\springframework\boot\spring-boot-starter-thymeleaf\3.4.2\spring-boot-starter-thymeleaf-3.4.2.jar;C:\Users\Youssef\.m2\repository\org\thymeleaf\thymeleaf-spring6\3.1.3.RELEASE\thymeleaf-spring6-3.1.3.RELEASE.jar;C:\Users\Youssef\.m2\repository\org\thymeleaf\thymeleaf\3.1.3.RELEASE\thymeleaf-3.1.3.RELEASE.jar;C:\Users\Youssef\.m2\repository\org\attoparser\attoparser\2.0.7.RELEASE\attoparser-2.0.7.RELEASE.jar;C:\Users\Youssef\.m2\repository\org\unbescape\unbescape\1.1.6.RELEASE\unbescape-1.1.6.RELEASE.jar;C:\Users\Youssef\.m2\repository\org\springframework\boot\spring-boot-starter-actuator\3.4.2\spring-boot-starter-actuator-3.4.2.jar;C:\Users\Youssef\.m2\repository\org\springframework\boot\spring-boot-actuator-autoconfigure\3.4.2\spring-boot-actuator-autoconfigure-3.4.2.jar;C:\Users\Youssef\.m2\repository\org\springframework\boot\spring-boot-actuator\3.4.2\spring-boot-actuator-3.4.2.jar;C:\Users\Youssef\.m2\repository\io\micrometer\micrometer-observation\1.14.3\micrometer-observation-1.14.3.jar;C:\Users\Youssef\.m2\repository\io\micrometer\micrometer-commons\1.14.3\micrometer-commons-1.14.3.jar;C:\Users\Youssef\.m2\repository\io\micrometer\micrometer-jakarta9\1.14.3\micrometer-jakarta9-1.14.3.jar;C:\Users\Youssef\.m2\repository\io\micrometer\micrometer-core\1.14.3\micrometer-core-1.14.3.jar;C:\Users\Youssef\.m2\repository\org\hdrhistogram\HdrHistogram\2.2.2\HdrHistogram-2.2.2.jar;C:\Users\Youssef\.m2\repository\org\latencyutils\LatencyUtils\2.0.3\LatencyUtils-2.0.3.jar;C:\Users\Youssef\.m2\repository\org\springframework\boot\spring-boot-starter-validation\3.4.2\spring-boot-starter-validation-3.4.2.jar;C:\Users\Youssef\.m2\repository\org\apache\tomcat\embed\tomcat-embed-el\10.1.34\tomcat-embed-el-10.1.34.jar;C:\Users\Youssef\.m2\repository\org\springframework\boot\spring-boot-starter-websocket\3.4.2\spring-boot-starter-websocket-3.4.2.jar;C:\Users\Youssef\.m2\repository\org\springframework\spring-messaging\6.2.2\spring-messaging-6.2.2.jar;C:\Users\Youssef\.m2\repository\org\springframework\spring-websocket\6.2.2\spring-websocket-6.2.2.jar;C:\Users\Youssef\.m2\repository\org\slf4j\slf4j-api\2.0.16\slf4j-api-2.0.16.jar;C:\Users\Youssef\.m2\repository\com\fasterxml\jackson\core\jackson-databind\2.18.2\jackson-databind-2.18.2.jar;C:\Users\Youssef\.m2\repository\com\fasterxml\jackson\core\jackson-annotations\2.18.2\jackson-annotations-2.18.2.jar;C:\Users\Youssef\.m2\repository\com\fasterxml\jackson\core\jackson-core\2.18.2\jackson-core-2.18.2.jar;C:\Users\Youssef\.m2\repository\org\springframework\boot\spring-boot-starter-mail\3.4.2\spring-boot-starter-mail-3.4.2.jar;C:\Users\Youssef\.m2\repository\org\springframework\spring-context-support\6.2.2\spring-context-support-6.2.2.jar;C:\Users\Youssef\.m2\repository\org\eclipse\angus\jakarta.mail\2.0.3\jakarta.mail-2.0.3.jar;C:\Users\Youssef\.m2\repository\jakarta\activation\jakarta.activation-api\2.1.3\jakarta.activation-api-2.1.3.jar;C:\Users\Youssef\.m2\repository\org\eclipse\angus\angus-activation\2.0.2\angus-activation-2.0.2.jar;C:\Users\Youssef\.m2\repository\com\google\firebase\firebase-admin\9.2.0\firebase-admin-9.2.0.jar;C:\Users\Youssef\.m2\repository\com\google\api-client\google-api-client\2.2.0\google-api-client-2.2.0.jar;C:\Users\Youssef\.m2\repository\commons-codec\commons-codec\1.17.2\commons-codec-1.17.2.jar;C:\Users\Youssef\.m2\repository\com\google\oauth-client\google-oauth-client\1.34.1\google-oauth-client-1.34.1.jar;C:\Users\Youssef\.m2\repository\com\google\http-client\google-http-client-gson\1.42.3\google-http-client-gson-1.42.3.jar;C:\Users\Youssef\.m2\repository\com\google\http-client\google-http-client-apache-v2\1.42.3\google-http-client-apache-v2-1.42.3.jar;C:\Users\Youssef\.m2\repository\org\apache\httpcomponents\httpcore\4.4.16\httpcore-4.4.16.jar;C:\Users\Youssef\.m2\repository\org\apache\httpcomponents\httpclient\4.5.14\httpclient-4.5.14.jar;C:\Users\Youssef\.m2\repository\com\google\api-client\google-api-client-gson\2.2.0\google-api-client-gson-2.2.0.jar;C:\Users\Youssef\.m2\repository\com\google\http-client\google-http-client\1.43.1\google-http-client-1.43.1.jar;C:\Users\Youssef\.m2\repository\com\google\code\findbugs\jsr305\3.0.2\jsr305-3.0.2.jar;C:\Users\Youssef\.m2\repository\com\google\j2objc\j2objc-annotations\1.3\j2objc-annotations-1.3.jar;C:\Users\Youssef\.m2\repository\io\opencensus\opencensus-contrib-http-util\0.31.1\opencensus-contrib-http-util-0.31.1.jar;C:\Users\Youssef\.m2\repository\com\google\api\api-common\2.12.0\api-common-2.12.0.jar;C:\Users\Youssef\.m2\repository\com\google\auto\value\auto-value-annotations\1.10.1\auto-value-annotations-1.10.1.jar;C:\Users\Youssef\.m2\repository\javax\annotation\javax.annotation-api\1.3.2\javax.annotation-api-1.3.2.jar;C:\Users\Youssef\.m2\repository\com\google\auth\google-auth-library-oauth2-http\1.17.0\google-auth-library-oauth2-http-1.17.0.jar;C:\Users\Youssef\.m2\repository\com\google\auth\google-auth-library-credentials\1.17.0\google-auth-library-credentials-1.17.0.jar;C:\Users\Youssef\.m2\repository\com\google\cloud\google-cloud-storage\2.22.4\google-cloud-storage-2.22.4.jar;C:\Users\Youssef\.m2\repository\com\google\guava\failureaccess\1.0.1\failureaccess-1.0.1.jar;C:\Users\Youssef\.m2\repository\com\google\guava\listenablefuture\9999.0-empty-to-avoid-conflict-with-guava\listenablefuture-9999.0-empty-to-avoid-conflict-with-guava.jar;C:\Users\Youssef\.m2\repository\com\google\http-client\google-http-client-jackson2\1.43.1\google-http-client-jackson2-1.43.1.jar;C:\Users\Youssef\.m2\repository\com\google\apis\google-api-services-storage\v1-rev20230301-2.0.0\google-api-services-storage-v1-rev20230301-2.0.0.jar;C:\Users\Youssef\.m2\repository\com\google\cloud\google-cloud-core\2.19.0\google-cloud-core-2.19.0.jar;C:\Users\Youssef\.m2\repository\com\google\cloud\google-cloud-core-http\2.19.0\google-cloud-core-http-2.19.0.jar;C:\Users\Youssef\.m2\repository\com\google\http-client\google-http-client-appengine\1.43.1\google-http-client-appengine-1.43.1.jar;C:\Users\Youssef\.m2\repository\com\google\api\gax-httpjson\0.114.0\gax-httpjson-0.114.0.jar;C:\Users\Youssef\.m2\repository\com\google\cloud\google-cloud-core-grpc\2.19.0\google-cloud-core-grpc-2.19.0.jar;C:\Users\Youssef\.m2\repository\com\google\api\gax\2.29.0\gax-2.29.0.jar;C:\Users\Youssef\.m2\repository\com\google\api\gax-grpc\2.29.0\gax-grpc-2.29.0.jar;C:\Users\Youssef\.m2\repository\io\grpc\grpc-alts\1.55.1\grpc-alts-1.55.1.jar;C:\Users\Youssef\.m2\repository\io\grpc\grpc-grpclb\1.55.1\grpc-grpclb-1.55.1.jar;C:\Users\Youssef\.m2\repository\org\conscrypt\conscrypt-openjdk-uber\2.5.2\conscrypt-openjdk-uber-2.5.2.jar;C:\Users\Youssef\.m2\repository\io\grpc\grpc-auth\1.55.1\grpc-auth-1.55.1.jar;C:\Users\Youssef\.m2\repository\io\grpc\grpc-protobuf\1.55.1\grpc-protobuf-1.55.1.jar;C:\Users\Youssef\.m2\repository\io\grpc\grpc-protobuf-lite\1.55.1\grpc-protobuf-lite-1.55.1.jar;C:\Users\Youssef\.m2\repository\com\google\api\grpc\proto-google-iam-v1\1.15.0\proto-google-iam-v1-1.15.0.jar;C:\Users\Youssef\.m2\repository\com\google\protobuf\protobuf-java\3.23.2\protobuf-java-3.23.2.jar;C:\Users\Youssef\.m2\repository\com\google\protobuf\protobuf-java-util\3.23.2\protobuf-java-util-3.23.2.jar;C:\Users\Youssef\.m2\repository\com\google\api\grpc\proto-google-common-protos\2.20.0\proto-google-common-protos-2.20.0.jar;C:\Users\Youssef\.m2\repository\org\threeten\threetenbp\1.6.8\threetenbp-1.6.8.jar;C:\Users\Youssef\.m2\repository\com\google\api\grpc\proto-google-cloud-storage-v2\2.22.4-alpha\proto-google-cloud-storage-v2-2.22.4-alpha.jar;C:\Users\Youssef\.m2\repository\com\google\api\grpc\grpc-google-cloud-storage-v2\2.22.4-alpha\grpc-google-cloud-storage-v2-2.22.4-alpha.jar;C:\Users\Youssef\.m2\repository\com\google\api\grpc\gapic-google-cloud-storage-v2\2.22.4-alpha\gapic-google-cloud-storage-v2-2.22.4-alpha.jar;C:\Users\Youssef\.m2\repository\io\grpc\grpc-api\1.55.1\grpc-api-1.55.1.jar;C:\Users\Youssef\.m2\repository\io\grpc\grpc-netty-shaded\1.55.1\grpc-netty-shaded-1.55.1.jar;C:\Users\Youssef\.m2\repository\io\perfmark\perfmark-api\0.26.0\perfmark-api-0.26.0.jar;C:\Users\Youssef\.m2\repository\io\grpc\grpc-core\1.55.1\grpc-core-1.55.1.jar;C:\Users\Youssef\.m2\repository\com\google\android\annotations\4.1.1.4\annotations-4.1.1.4.jar;C:\Users\Youssef\.m2\repository\org\codehaus\mojo\animal-sniffer-annotations\1.23\animal-sniffer-annotations-1.23.jar;C:\Users\Youssef\.m2\repository\io\grpc\grpc-stub\1.55.1\grpc-stub-1.55.1.jar;C:\Users\Youssef\.m2\repository\io\grpc\grpc-googleapis\1.55.1\grpc-googleapis-1.55.1.jar;C:\Users\Youssef\.m2\repository\org\checkerframework\checker-qual\3.32.0\checker-qual-3.32.0.jar;C:\Users\Youssef\.m2\repository\io\grpc\grpc-xds\1.55.1\grpc-xds-1.55.1.jar;C:\Users\Youssef\.m2\repository\io\opencensus\opencensus-proto\0.2.0\opencensus-proto-0.2.0.jar;C:\Users\Youssef\.m2\repository\io\grpc\grpc-services\1.55.1\grpc-services-1.55.1.jar;C:\Users\Youssef\.m2\repository\com\google\re2j\re2j\1.6\re2j-1.6.jar;C:\Users\Youssef\.m2\repository\io\grpc\grpc-rls\1.55.1\grpc-rls-1.55.1.jar;C:\Users\Youssef\.m2\repository\com\google\cloud\google-cloud-firestore\3.13.0\google-cloud-firestore-3.13.0.jar;C:\Users\Youssef\.m2\repository\com\google\api\grpc\proto-google-cloud-firestore-v1\3.13.0\proto-google-cloud-firestore-v1-3.13.0.jar;C:\Users\Youssef\.m2\repository\com\google\cloud\proto-google-cloud-firestore-bundle-v1\3.13.0\proto-google-cloud-firestore-bundle-v1-3.13.0.jar;C:\Users\Youssef\.m2\repository\io\opencensus\opencensus-contrib-grpc-util\0.31.1\opencensus-contrib-grpc-util-0.31.1.jar;C:\Users\Youssef\.m2\repository\com\google\guava\guava\33.3.1-jre\guava-33.3.1-jre.jar;C:\Users\Youssef\.m2\repository\io\netty\netty-codec-http\4.1.117.Final\netty-codec-http-4.1.117.Final.jar;C:\Users\Youssef\.m2\repository\io\netty\netty-common\4.1.117.Final\netty-common-4.1.117.Final.jar;C:\Users\Youssef\.m2\repository\io\netty\netty-buffer\4.1.117.Final\netty-buffer-4.1.117.Final.jar;C:\Users\Youssef\.m2\repository\io\netty\netty-codec\4.1.117.Final\netty-codec-4.1.117.Final.jar;C:\Users\Youssef\.m2\repository\io\netty\netty-handler\4.1.117.Final\netty-handler-4.1.117.Final.jar;C:\Users\Youssef\.m2\repository\io\netty\netty-resolver\4.1.117.Final\netty-resolver-4.1.117.Final.jar;C:\Users\Youssef\.m2\repository\io\netty\netty-transport-native-unix-common\4.1.117.Final\netty-transport-native-unix-common-4.1.117.Final.jar;C:\Users\Youssef\.m2\repository\io\netty\netty-transport\4.1.117.Final\netty-transport-4.1.117.Final.jar;C:\Users\Youssef\.m2\repository\org\hibernate\validator\hibernate-validator\8.0.2.Final\hibernate-validator-8.0.2.Final.jar;C:\Users\Youssef\.m2\repository\jakarta\validation\jakarta.validation-api\3.0.2\jakarta.validation-api-3.0.2.jar;C:\Users\Youssef\.m2\repository\org\jboss\logging\jboss-logging\3.6.1.Final\jboss-logging-3.6.1.Final.jar;C:\Users\Youssef\.m2\repository\com\fasterxml\classmate\1.7.0\classmate-1.7.0.jar;C:\Users\Youssef\.m2\repository\jakarta\xml\bind\jakarta.xml.bind-api\4.0.2\jakarta.xml.bind-api-4.0.2.jar;C:\Users\Youssef\.m2\repository\org\springframework\spring-core\6.2.2\spring-core-6.2.2.jar;C:\Users\Youssef\.m2\repository\org\springframework\spring-jcl\6.2.2\spring-jcl-6.2.2.jar;C:\Users\Youssef\.m2\repository\com\openhtmltopdf\openhtmltopdf-pdfbox\1.0.10\openhtmltopdf-pdfbox-1.0.10.jar;C:\Users\Youssef\.m2\repository\org\apache\pdfbox\xmpbox\2.0.24\xmpbox-2.0.24.jar;C:\Users\Youssef\.m2\repository\com\openhtmltopdf\openhtmltopdf-core\1.0.10\openhtmltopdf-core-1.0.10.jar;C:\Users\Youssef\.m2\repository\de\rototor\pdfbox\graphics2d\0.32\graphics2d-0.32.jar;C:\Users\Youssef\.m2\repository\org\apache\pdfbox\pdfbox\2.0.27\pdfbox-2.0.27.jar;C:\Users\Youssef\.m2\repository\org\apache\pdfbox\fontbox\2.0.27\fontbox-2.0.27.jar;C:\Users\Youssef\.m2\repository\commons-logging\commons-logging\1.2\commons-logging-1.2.jar;C:\Users\Youssef\.m2\repository\com\openhtmltopdf\openhtmltopdf-slf4j\1.0.10\openhtmltopdf-slf4j-1.0.10.jar
+Launcher Type: SUN_STANDARD
+
+[Global flags]
+     intx CICompilerCount                          = 4                                         {product} {ergonomic}
+     uint ConcGCThreads                            = 3                                         {product} {ergonomic}
+     uint G1ConcRefinementThreads                  = 10                                        {product} {ergonomic}
+   size_t G1HeapRegionSize                         = 4194304                                   {product} {ergonomic}
+    uintx GCDrainStackTargetSize                   = 64                                        {product} {ergonomic}
+   size_t InitialHeapSize                          = 536870912                                 {product} {ergonomic}
+   size_t MarkStackSize                            = 4194304                                   {product} {ergonomic}
+   size_t MaxHeapSize                              = 8543797248                                {product} {ergonomic}
+   size_t MinHeapDeltaBytes                        = 4194304                                   {product} {ergonomic}
+   size_t MinHeapSize                              = 8388608                                   {product} {ergonomic}
+    uintx NonNMethodCodeHeapSize                   = 5839372                                {pd product} {ergonomic}
+    uintx NonProfiledCodeHeapSize                  = 122909434                              {pd product} {ergonomic}
+    uintx ProfiledCodeHeapSize                     = 122909434                              {pd product} {ergonomic}
+    uintx ReservedCodeCacheSize                    = 251658240                              {pd product} {ergonomic}
+     bool SegmentedCodeCache                       = true                                      {product} {ergonomic}
+   size_t SoftMaxHeapSize                          = 8543797248                             {manageable} {ergonomic}
+     bool UseCompressedOops                        = true                           {product lp64_product} {ergonomic}
+     bool UseG1GC                                  = true                                      {product} {ergonomic}
+     bool UseLargePagesIndividualAllocation        = false                                  {pd product} {ergonomic}
+
+Logging:
+Log output configuration:
+ #0: stdout all=warning uptime,level,tags foldmultilines=false
+ #1: stderr all=off uptime,level,tags foldmultilines=false
+
+Environment Variables:
+PATH=C:\Python313\Scripts\;C:\Python313\;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Windows\System32\OpenSSH\;C:\Program Files\dotnet\;C:\Program Files\nodejs\;C:\ProgramData\chocolatey\bin;C:\Program Files\Docker\Docker\resources\bin;C:\Program Files\Git\cmd;C:\Users\Youssef\AppData\Local\Programs\Python\Python314\Scripts\;C:\Users\Youssef\AppData\Local\Programs\Python\Python314\;C:\Users\Youssef\AppData\Local\Microsoft\WindowsApps;C:\Users\Youssef\AppData\Roaming\npm;C:\Users\Youssef\AppData\Local\Programs\Microsoft VS Code\bin;C:\Program Files\JetBrains\IntelliJ IDEA Community Edition 2025.2.3\bin
+USERNAME=Youssef
+OS=Windows_NT
+PROCESSOR_IDENTIFIER=Intel64 Family 6 Model 151 Stepping 5, GenuineIntel
+TMP=C:\Users\Youssef\AppData\Local\Temp
+TEMP=C:\Users\Youssef\AppData\Local\Temp
+
+
+
+
+Periodic native trim disabled
+
+---------------  S Y S T E M  ---------------
+
+OS:
+ Windows 10 , 64 bit Build 19041 (10.0.19041.5915)
+OS uptime: 7 days 1:49 hours
+Hyper-V role detected
+
+CPU: total 12 (initial active 12) (6 cores per cpu, 2 threads per core) family 6 model 151 stepping 5 microcode 0x2c, cx8, cmov, fxsr, ht, mmx, 3dnowpref, sse, sse2, sse3, ssse3, sse4.1, sse4.2, popcnt, lzcnt, tsc, tscinvbit, avx, avx2, aes, erms, clmul, bmi1, bmi2, adx, sha, fma, vzeroupper, clflush, clflushopt, clwb, hv, rdtscp, rdpid, fsrm, f16c, cet_ibt, cet_ss
+Processor Information for the first 12 processors :
+  Max Mhz: 2500, Current Mhz: 2500, Mhz Limit: 2500
+
+Memory: 4k page, system-wide physical 32581M (11782M free)
+TotalPageFile size 93549M (AvailPageFile size 516M)
+current process WorkingSet (physical memory assigned to process): 11M, peak: 11M
+current process commit charge ("private bytes"): 64M, peak: 576M
+
+vm_info: OpenJDK 64-Bit Server VM (21.0.8+9-LTS) for windows-amd64 JRE (21.0.8+9-LTS), built on 2025-07-09T19:22:31Z by "Administrator" with MS VC++ 16.10 / 16.11 (VS2019)
+
+END.

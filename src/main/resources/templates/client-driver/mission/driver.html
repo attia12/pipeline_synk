@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Driver Mission Receiver</title>
+    <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1.5.2/dist/sockjs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
+    <style>
+        #missionOffers { margin: 20px; }
+    </style>
+</head>
+<body>
+<h1>Receive Mission Offers</h1>
+<div id="status">Connecting...</div>
+<div id="missionOffers"></div>
+
+<script>
+    // Replace with actual driver JWT token
+    const jwtToken = "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJtb2hhbWVkLmFpY2hhb3VpLnRpY0BnbWFpbC5jb20iLCJyb2xlcyI6WyJST0xFX0RSSVZFUiJdLCJ1c2VySWQiOiI2N2ZmNzgyZmE0NDU4NzExMTNmNTlmY2YiLCJpYXQiOjE3NDUzMjk1NTcsImV4cCI6MTc0NTMzMzE1N30.UOn1ddVuhcH4x2G7oxb-qF2J4LyWqK_RMCjoEsW7JW0";
+    const socket = new SockJS('http://localhost:8090/ws');
+    const stompClient = Stomp.over(socket);
+
+    stompClient.connect({'Authorization': jwtToken}, function (frame) {
+        document.getElementById('status').innerText = 'Connected';
+        console.log('Connected: ' + frame);
+
+        stompClient.subscribe('/user/mohamed.aichaoui.tic@gmail.com/queue/mission-offer', function (message) {
+            console.log('Received mission offer:', message.body);
+            const mission = JSON.parse(message.body);
+            displayMissionOffer(mission);
+        });
+    }, function (error) {
+        document.getElementById('status').innerText = 'Connection Error: ' + error;
+        console.error('Connection error:', error);
+    });
+
+    function displayMissionOffer(mission) {
+        const offersDiv = document.getElementById('missionOffers');
+        const offerElement = document.createElement('div');
+        offerElement.id = 'offer-' + mission.moveId;
+        offerElement.innerHTML = `
+            <h3>Mission Offer: ${mission.moveId}</h3>
+            <p>From: ${mission.sourceAddress}</p>
+            <p>To: ${mission.destinationAddress}</p>
+            <button onclick="acceptMission('${mission.moveId}')">Accept</button>
+            <button onclick="declineMission('${mission.moveId}')">Decline</button>
+        `;
+        offersDiv.appendChild(offerElement);
+    }
+
+    function acceptMission(moveId) {
+        const response = {
+            moveId: moveId,
+            driverEmail: "mohamed.aichaoui.tic@gmail.com",
+            status: "ACCEPTED"
+        };
+        stompClient.send('/app/mission/' + moveId + '/accept', {}, JSON.stringify(response));
+        console.log('Mission accepted:', moveId);
+        removeMissionOffer(moveId);
+    }
+
+    function declineMission(moveId) {
+        const response = {
+            moveId: moveId,
+            driverEmail: "mohamed.aichaoui.tic@gmail.com",
+            status: "DECLINED"
+        };
+        stompClient.send('/app/mission/' + moveId + '/decline', {}, JSON.stringify(response));
+        console.log('Mission declined:', moveId);
+        removeMissionOffer(moveId);
+    }
+
+    function removeMissionOffer(moveId) {
+        const offerElement = document.getElementById('offer-' + moveId);
+        if (offerElement) {
+            offerElement.remove();
+        }
+    }
+</script>
+</body>
+</html>

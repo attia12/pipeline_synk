@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Avertissement : Blocage imminent d'un sous-administrateur</title>
+</head>
+<body>
+<p>Bonjour Admin,</p>
+<p>Le sous-administrateur <strong th:text="${subAdminEmail}"></strong> n'a pas mis à jour ses documents depuis plus de 5 mois et 25 jours. Il sera bloqué automatiquement dans 5 jours si aucune mise à jour n'est effectuée.</p>
+<p>Veuillez vérifier et prendre les mesures nécessaires.</p>
+<p>Cordialement,<br>L'équipe de gestion</p>
+</body>
+</html>

@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tableau de bord du chauffeur</title>
+    <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1.5.2/dist/sockjs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        h1 {
+            color: #333;
+        }
+        .notification {
+            background-color: white;
+            border-left: 6px solid #2196F3;
+            margin-bottom: 15px;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .notification.urgent {
+            border-left-color: #ff5722;
+            background-color: #ffebee;
+        }
+        .notification.planned {
+            border-left-color: #4caf50;
+            background-color: #e8f5e9;
+        }
+        .notification h3 {
+            margin-top: 0;
+            color: #333;
+        }
+        .notification p {
+            margin: 5px 0;
+        }
+        button {
+            margin: 5px;
+            padding: 10px 15px;
+            background-color: #2196F3;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        button:hover {
+            background-color: #1976D2;
+        }
+        button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+        .btn-accept {
+            background-color: #4caf50;
+        }
+        .btn-accept:hover {
+            background-color: #45a049;
+        }
+        .btn-decline {
+            background-color: #f44336;
+        }
+        .btn-decline:hover {
+            background-color: #d32f2f;
+        }
+        .btn-book {
+            background-color: #ff9800;
+        }
+        .btn-book:hover {
+            background-color: #f57c00;
+        }
+        .mission-details {
+            background-color: #f9f9f9;
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+        .badge {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 12px;
+            font-weight: bold;
+            margin: 5px 5px 5px 0;
+        }
+        .badge-urgent {
+            background-color: #ff5722;
+            color: white;
+        }
+        .badge-planned {
+            background-color: #4caf50;
+            color: white;
+        }
+        .countdown {
+            font-size: 18px;
+            font-weight: bold;
+            color: #ff5722;
+        }
+        .tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #ddd;
+        }
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            border: none;
+            background: none;
+            font-size: 16px;
+        }
+        .tab.active {
+            border-bottom: 3px solid #2196F3;
+            color: #2196F3;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+    </style>
+    <script>
+        const driverId = "68ed08d227e53254b77199c2";
+        const token = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJsYXJpYmkucmFtaUBlc3ByaXQudG4iLCJyb2xlcyI6WyJST0xFX0RSSVZFUiJdLCJ1c2VySWQiOiI2OGVkMDhkMjI3ZTUzMjU0Yjc3MTk5YzIiLCJmaXJzdE5hbWUiOiJyYW1pIiwibGFzdE5hbWUiOiJyYW1pIiwicGhvbmVOdW1iZXIiOiIrMzM2MTIzNDU2NzgiLCJpYXQiOjE3NjE5MDEyNzAsImV4cCI6MTc2MTkzNzI3MH0.KIg-ZjpHkWzlxuQ5o8g0-qBvzFPggkBtC8kX8ab4fg4";
+
+        let currentMoveId = null;
+        let stompClient = null;
+
+        function connect() {
+            const socket = new SockJS('http://localhost:8090/ws');
+            stompClient = Stomp.over(socket);
+
+            stompClient.connect({ 'Authorization': 'Bearer ' + token }, function(frame) {
+                console.log('✅ Connected:', frame);
+
+                stompClient.subscribe('/topic/driver/' + driverId, function(message) {
+                    console.log("📩 Raw message:", message.body);
+                    handleNotification(message.body);
+                });
+
+                console.log('✅ Subscribed to: /topic/driver/' + driverId);
+            }, function(error) {
+                console.error("🚨 STOMP Error:", error);
+                setTimeout(connect, 5000);
+            });
+        }
+
+        function handleNotification(messageBody) {
+            try {
+                const notification = JSON.parse(messageBody);
+                console.log("📦 Parsed notification:", notification);
+                console.log("🏷️ Type:", notification.notificationType);
+                console.log("📋 Metadata:", notification.metadata);
+
+                const now = new Date().toLocaleString();
+
+                switch(notification.notificationType) {
+                    case 'MISSION_OFFER':
+                        displayUrgentMission(notification, now);
+                        break;
+                    case 'PLANNED':
+                        displayPlannedMission(notification, now);
+                        break;
+                    case 'MISSION_REVOKED':
+                        handleMissionRevoked(notification);
+                        break;
+                    case 'MISSION_EXPIRED':
+                        handleMissionExpired(notification);
+                        break;
+                    default:
+                        console.log('ℹ️ Unknown type:', notification.notificationType);
+                        displayGenericNotification(notification, now);
+                }
+            } catch (error) {
+                console.error("❌ Parse error:", error);
+            }
+        }
+
+        function displayUrgentMission(notification, receivedAt) {
+            console.log('🚨 Displaying URGENT mission');
+
+            // ✅ First try metadata, then try parsing body as fallback
+            let missionData = notification.metadata;
+
+            if (!missionData || !missionData.moveId) {
+                try {
+                    missionData = JSON.parse(notification.body);
+                } catch (e) {
+                    console.error('❌ No mission data found');
+                    return;
+                }
+            }
+
+            const urgentList = document.getElementById('urgent-missions');
+            const moveId = missionData.moveId;
+
+            let notificationDiv = document.createElement('div');
+            notificationDiv.className = 'notification urgent';
+            notificationDiv.id = `notification-${moveId}`;
+            notificationDiv.innerHTML = `
+                <span class="badge badge-urgent">🚨 URGENT</span>
+                <h3>Mission Urgente</h3>
+                <p><strong>Reçue à:</strong> ${receivedAt}</p>
+                <div class="mission-details">
+                    <p><strong>🆔 Mission ID:</strong> ${moveId}</p>
+                    <p><strong>📍 Départ:</strong> ${missionData.sourceAddress || missionData.source || 'N/A'}</p>
+                    <p><strong>🎯 Destination:</strong> ${missionData.destinationAddress || missionData.destination || 'N/A'}</p>
+                    <p><strong>💰 Prix:</strong> ${missionData.postCommissionCost || missionData.amount || 'N/A'} €</p>
+                    <p><strong>📏 Distance:</strong> ${missionData.distanceInKm || 'N/A'} km</p>
+                    <p><strong>⏱️ Durée:</strong> ${missionData.durationInMinutes || 'N/A'}</p>
+                    <p><strong>📦 Articles:</strong> ${missionData.numberOfProducts || 'N/A'}</p>
+                    <p class="countdown"><strong>⏰ Expire dans:</strong> <span id="countdown-${moveId}">${missionData.remainingSeconds || 60}</span>s</p>
+                </div>
+                <button class="btn-accept" onclick="acceptMission('${moveId}')">✅ Accepter</button>
+                <button class="btn-decline" onclick="declineMission('${moveId}')">❌ Refuser</button>
+            `;
+
+            urgentList.insertBefore(notificationDiv, urgentList.firstChild);
+            startCountdown(moveId, missionData.remainingSeconds || 60);
+        }
+
+        function displayPlannedMission(notification, receivedAt) {
+            console.log('📅 Displaying PLANNED mission');
+
+            // ✅ Read from metadata (where backend puts the data)
+            let missionData = notification.metadata;
+
+            if (!missionData || !missionData.moveId) {
+                console.error('❌ No metadata found in notification');
+                console.log('Notification structure:', notification);
+                return;
+            }
+
+            console.log('✅ Mission data:', missionData);
+
+            const plannedList = document.getElementById('planned-missions');
+            const moveId = missionData.moveId;
+
+            let notificationDiv = document.createElement('div');
+            notificationDiv.className = 'notification planned';
+            notificationDiv.id = `notification-${moveId}`;
+            notificationDiv.innerHTML = `
+                <span class="badge badge-planned">📅 PLANNED</span>
+                <h3>Mission Planifiée Disponible</h3>
+                <p><strong>Reçue à:</strong> ${receivedAt}</p>
+                <div class="mission-details">
+                    <p><strong>🆔 Mission ID:</strong> ${moveId}</p>
+                    <p><strong>📍 Départ:</strong> ${missionData.sourceAddress || 'N/A'}</p>
+                    <p><strong>🎯 Destination:</strong> ${missionData.destinationAddress || 'N/A'}</p>
+                    <p><strong>💰 Prix:</strong> ${missionData.postCommissionCost || 'N/A'} €</p>
+                    <p><strong>📏 Distance:</strong> ${missionData.distanceInKm || 'N/A'} km</p>
+                    <p><strong>⏱️ Durée:</strong> ${missionData.durationInMinutes || 'N/A'}</p>
+                    <p><strong>📦 Articles:</strong> ${missionData.numberOfProducts || 'N/A'}</p>
+                    <p><strong>📅 Date:</strong> ${missionData.plannedDate || 'N/A'} à ${missionData.plannedTime || ''}</p>
+                    <p><strong>👤 Client:</strong> ${missionData.clientName || 'N/A'}</p>
+                    <p><strong>📞 Téléphone:</strong> ${missionData.phoneNumber || 'N/A'}</p>
+                    ${missionData.items ? `<p><strong>📋 Items:</strong> ${missionData.items}</p>` : ''}
+                </div>
+                <button class="btn-book" onclick="bookPlannedMission('${moveId}')">📖 Réserver cette mission</button>
+            `;
+
+            plannedList.insertBefore(notificationDiv, plannedList.firstChild);
+        }
+
+        function displayGenericNotification(notification, receivedAt) {
+            const urgentList = document.getElementById('urgent-missions');
+
+            let notificationDiv = document.createElement('div');
+            notificationDiv.className = 'notification';
+            notificationDiv.innerHTML = `
+                <h3>${notification.title || 'Notification'}</h3>
+                <p><strong>Reçue à:</strong> ${receivedAt}</p>
+                <p>${notification.body || 'Aucun détail'}</p>
+            `;
+
+            urgentList.appendChild(notificationDiv);
+        }
+
+        function handleMissionRevoked(notification) {
+            console.log('🚫 Mission revoked:', notification.relatedMoveId);
+            const element = document.getElementById(`notification-${notification.relatedMoveId}`);
+            if (element) {
+                element.style.backgroundColor = '#ffcdd2';
+                element.querySelector('h3').textContent = '🚫 Mission Révoquée';
+                element.querySelectorAll('button').forEach(btn => btn.disabled = true);
+            }
+        }
+
+        function handleMissionExpired(notification) {
+            console.log('⏰ Mission expired:', notification.relatedMoveId);
+            const element = document.getElementById(`notification-${notification.relatedMoveId}`);
+            if (element) {
+                const countdown = element.querySelector(`#countdown-${notification.relatedMoveId}`);
+                if (countdown) countdown.textContent = 'Expirée';
+                element.querySelectorAll('button').forEach(btn => btn.disabled = true);
+            }
+        }
+
+        function startCountdown(moveId, initialSeconds) {
+            let countdown = parseInt(initialSeconds, 10);
+            const countdownElement = document.getElementById(`countdown-${moveId}`);
+
+            if (!countdownElement) return;
+
+            const interval = setInterval(() => {
+                countdown--;
+                if (countdown >= 0) {
+                    countdownElement.textContent = countdown;
+                } else {
+                    clearInterval(interval);
+                    countdownElement.textContent = "Expirée";
+                    const notification = document.getElementById(`notification-${moveId}`);
+                    if (notification) {
+                        notification.querySelectorAll('button').forEach(btn => btn.disabled = true);
+                    }
+                }
+            }, 1000);
+        }
+
+        function acceptMission(moveId) {
+            console.log('✅ Accepting urgent mission:', moveId);
+            const url = `http://localhost:8090/api/moves/${moveId}/accept`;
+
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Authorization': 'Bearer ' + token,
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => {
+                if (response.ok) {
+                    console.log('✅ Accepted');
+                    alert('✅ Mission acceptée!');
+                    currentMoveId = moveId;
+                    const notification = document.getElementById(`notification-${moveId}`);
+                    if (notification) {
+                        notification.style.backgroundColor = '#c8e6c9';
+                        notification.querySelectorAll('button').forEach(btn => btn.disabled = true);
+                    }
+                } else {
+                    alert('❌ Erreur lors de l\'acceptation');
+                }
+            })
+            .catch(error => {
+                console.error('❌ Error:', error);
+                alert('❌ Erreur réseau');
+            });
+        }
+
+        function declineMission(moveId) {
+            console.log('❌ Declining mission:', moveId);
+            const url = `http://localhost:8090/api/moves/${moveId}/decline`;
+
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Authorization': 'Bearer ' + token,
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => {
+                if (response.ok) {
+                    console.log('🚫 Declined');
+                    alert('🚫 Mission refusée');
+                    document.getElementById(`notification-${moveId}`).remove();
+                } else {
+                    alert("⚠️ Erreur");
+                }
+            })
+            .catch(error => {
+                console.error('❌ Error:', error);
+                alert('❌ Erreur réseau');
+            });
+        }
+
+        function bookPlannedMission(moveId) {
+            console.log('📖 Booking planned mission:', moveId);
+            const url = `http://localhost:8090/api/moves/planned/${moveId}/book`;
+
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Authorization': 'Bearer ' + token,
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => {
+                if (response.ok) {
+                    console.log('✅ Booked');
+                    alert('✅ Mission réservée!');
+                    const notification = document.getElementById(`notification-${moveId}`);
+                    if (notification) {
+                        notification.style.backgroundColor = '#c8e6c9';
+                        notification.querySelector('button').disabled = true;
+                        notification.querySelector('button').textContent = '✅ Réservée';
+                    }
+                } else {
+                    alert('❌ Erreur (peut-être déjà réservée)');
+                }
+            })
+            .catch(error => {
+                console.error('❌ Error:', error);
+                alert('❌ Erreur réseau');
+            });
+        }
+
+        function advanceMissionStatus() {
+            if (!currentMoveId) {
+                alert('⚠️ Acceptez d\'abord une mission');
+                return;
+            }
+            const statusUpdate = { moveId: currentMoveId, driverId: driverId };
+            stompClient.send("/app/mission/status/next", {}, JSON.stringify(statusUpdate));
+            console.log("➡️ Status advancement requested");
+        }
+
+        function showTab(tabName) {
+            const tabs = document.querySelectorAll('.tab');
+            const contents = document.querySelectorAll('.tab-content');
+
+            tabs.forEach(tab => tab.classList.remove('active'));
+            contents.forEach(content => content.classList.remove('active'));
+
+            document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
+            document.getElementById(`${tabName}-tab`).classList.add('active');
+        }
+
+        setInterval(() => {
+            if (stompClient && stompClient.connected) {
+                const locationUpdate = {
+                    driverId: driverId,
+                    latitude: 48.868335029786856 + Math.random() * 0.0001,
+                    longitude: 2.3655909803206265 + Math.random() * 0.0001
+                };
+                stompClient.send("/app/driver/location", {}, JSON.stringify(locationUpdate));
+                console.log("📡 Location sent");
+            }
+        }, 10000);
+
+        window.onload = function() {
+            connect();
+            showTab('urgent');
+        };
+    </script>
+</head>
+<body>
+<h1>🚗 Tableau de bord du chauffeur</h1>
+<p>ID: <strong>68ed08d227e53254b77199c2</strong> | Console (F12) pour logs</p>
+
+<div class="tabs">
+    <button class="tab active" data-tab="urgent" onclick="showTab('urgent')">🚨 Missions Urgentes</button>
+    <button class="tab" data-tab="planned" onclick="showTab('planned')">📅 Missions Planifiées</button>
+</div>
+
+<div id="urgent-tab" class="tab-content active">
+    <h2>🚨 Missions Urgentes (avec compte à rebours)</h2>
+    <div id="urgent-missions"></div>
+</div>
+
+<div id="planned-tab" class="tab-content">
+    <h2>📅 Missions Planifiées Disponibles</h2>
+    <div id="planned-missions"></div>
+</div>
+
+<div style="margin-top: 30px; padding: 20px; background: white; border-radius: 5px;">
+    <h2>⚙️ Actions</h2>
+    <button onclick="advanceMissionStatus()">➡️ Avancer au statut suivant</button>
+</div>
+</body>
+</html>
