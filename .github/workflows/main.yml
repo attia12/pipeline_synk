@@ -22,7 +22,7 @@ jobs:
           java-version: 21
 
       - name: Build and run tests
-        run: mvn -B clean install
+        run: mvn -B clean install -Dspring.profiles.active=test
 
   code-review:
     runs-on: ubuntu-latest
