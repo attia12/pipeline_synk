@@ -2,11 +2,9 @@ name: Spring Boot CI/CD Pipeline
 
 on:
   push:
-    branches:
-      - main
+    branches: [main]
   pull_request:
-    branches:
-      - main
+    branches: [main]
 
 jobs:
   build-test:
@@ -18,11 +16,11 @@ jobs:
       - name: Set up JDK 21
         uses: actions/setup-java@v4
         with:
-          distribution: 'temurin'
+          distribution: temurin
           java-version: 21
 
       - name: Build and run tests
-        run: mvn -B clean install -Dspring.profiles.active=test
+        run: ./mvnw -B clean install -Dspring.profiles.active=test
 
   code-review:
     runs-on: ubuntu-latest
@@ -34,11 +32,11 @@ jobs:
       - name: Set up JDK 21
         uses: actions/setup-java@v4
         with:
-          distribution: 'temurin'
+          distribution: temurin
           java-version: 21
 
       - name: Run static code analysis (Checkstyle)
-        run: mvn checkstyle:checkstyle
+        run: ./mvnw checkstyle:checkstyle
 
   security-scan:
     runs-on: ubuntu-latest
@@ -53,10 +51,10 @@ jobs:
           distribution: temurin
           java-version: 21
 
-      - name: Run Snyk Maven Scan
-        uses: snyk/actions/maven@main
-        with:
-          args: test --all-projects --severity-threshold=medium
+      - name: Install Snyk CLI
+        run: npm install -g snyk
+
+      - name: Run Snyk Vulnerability Scan
+        run: snyk test --all-projects --severity-threshold=medium -d
         env:
-          JAVA_HOME: /opt/hostedtoolcache/jdk/21/x64
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
