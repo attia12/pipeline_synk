@@ -54,10 +54,10 @@ jobs:
           java-version: 21
 
       - name: Check SNYK_TOKEN presence
-        run: |
-          echo "Token length: ${#SNYK_TOKEN}"
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        run: |
+          echo "Token length: ${#SNYK_TOKEN}"
 
 
 
