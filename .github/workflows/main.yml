@@ -59,6 +59,7 @@ jobs:
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
 
+
       - name: Run Snyk Maven Scan
         uses: snyk/actions/maven@main
         with:
