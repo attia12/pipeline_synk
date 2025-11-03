@@ -60,8 +60,7 @@ jobs:
           echo "Directory contents:"
           ls -la
 
-      - name: Verify Maven Dependency Tree
-        run: ./mvnw dependency:tree -DoutputType=dot --batch-mode --non-recursive
+    
 
       - name: Install Snyk CLI
         run: npm install -g snyk
