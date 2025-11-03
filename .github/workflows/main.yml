@@ -54,10 +54,11 @@ jobs:
           java-version: 21
 
       - name: Check SNYK_TOKEN presence
-        run:
+        run: |
           echo "Token length: ${#SNYK_TOKEN}"
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+
 
 
       - name: Run Snyk Maven Scan
