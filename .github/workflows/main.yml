@@ -2,44 +2,36 @@ name: Spring Boot CI/CD Pipeline
 
 on:
   push:
-    branches:
-      - main
+    branches: [main]
   pull_request:
-    branches:
-      - main
+    branches: [main]
 
 jobs:
   build-test:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout source code
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
-      - name: Set up JDK 21
-        id: java_setup
+      - id: java_setup
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: 21
 
-      - name: Build and run tests
-        run: mvn -B clean install -Dspring.profiles.active=test
+      - run: mvn -B clean install -Dspring.profiles.active=test
 
   code-review:
     runs-on: ubuntu-latest
     needs: build-test
     steps:
-      - name: Checkout source code
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
-      - name: Set up JDK 21
-        uses: actions/setup-java@v4
+      - uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: 21
 
-      - name: Run static code analysis (Checkstyle)
-        run: mvn checkstyle:checkstyle
+      - run: mvn checkstyle:checkstyle
 
   security-scan:
     runs-on: ubuntu-latest
@@ -47,20 +39,21 @@ jobs:
     env:
       SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
     steps:
-      - name: Checkout source code
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
-      - name: Set up JDK 21
+      - id: java_setup
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: 21
 
-
+      - name: Export Java Home
+        run: echo "JAVA_HOME=${JAVA_HOME}" >> $GITHUB_ENV
 
       - name: Run Snyk Maven Scan
         uses: snyk/actions/maven@main
         with:
           args: test --all-projects --severity-threshold=medium
         env:
+          JAVA_HOME: ${{ env.JAVA_HOME }}
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
