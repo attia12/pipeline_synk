@@ -54,7 +54,7 @@ jobs:
           java-version: 21
 
       - name: Run Snyk Maven Scan
-        uses: snyk/actions/maven@v2
+        uses: snyk/actions/maven@main
         with:
           args: test --all-projects --severity-threshold=medium
         env:
