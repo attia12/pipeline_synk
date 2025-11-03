@@ -36,15 +36,24 @@ jobs:
   security-scan:
     runs-on: ubuntu-latest
     needs: build-test
-
+    env:
+      SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
     steps:
+      - uses: actions/checkout@v3
 
+      - id: java_setup
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: 21
 
-      - name: Install Snyk CLI
-        run: npm install -g snyk
+      - name: Export Java Home
+        run: echo "JAVA_HOME=${JAVA_HOME}" >> $GITHUB_ENV
 
-      - name: Run Snyk scan
-        run: snyk test --all-projects --severity-threshold=medium
+      - name: Run Snyk Maven Scan
+        uses: snyk/actions/maven@main
+        with:
+          args: test --all-projects --severity-threshold=medium
         env:
-          JAVA_HOME: ${{ steps.java_setup.outputs.java-home }}
+          JAVA_HOME: ${{ env.JAVA_HOME }}
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
