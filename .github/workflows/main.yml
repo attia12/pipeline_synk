@@ -47,13 +47,10 @@ jobs:
           distribution: 'temurin'
           java-version: 21
 
-      - name: Export Java Home
-        run: echo "JAVA_HOME=${JAVA_HOME}" >> $GITHUB_ENV
-
       - name: Run Snyk Maven Scan
         uses: snyk/actions/maven@main
         with:
           args: test --all-projects --severity-threshold=medium
         env:
-          JAVA_HOME: ${{ env.JAVA_HOME }}
+          JAVA_HOME: ${{ steps.java_setup.outputs.java-home }}
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
