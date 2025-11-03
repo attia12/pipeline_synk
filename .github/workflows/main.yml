@@ -37,7 +37,7 @@ jobs:
           distribution: 'temurin'
           java-version: 21
 
-      - name: Run static code analysis
+      - name: Run static code analysis (Checkstyle)
         run: mvn checkstyle:checkstyle
 
   security-scan:
@@ -53,8 +53,10 @@ jobs:
           distribution: 'temurin'
           java-version: 21
 
+      - name: Install Snyk CLI
+        run: npm install -g snyk
+
       - name: Run Snyk Vulnerability Scan
-        uses: snyk/actions/maven@master
+        run: snyk test --all-projects --severity-threshold=medium
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-          JAVA_HOME: ${{ env.JAVA_HOME }}
