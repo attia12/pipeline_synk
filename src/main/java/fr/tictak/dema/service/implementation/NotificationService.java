@@ -282,12 +282,10 @@ public class NotificationService {
         Map<String, String> metadata = new HashMap<>();
 
         if (payload instanceof MissionNotification mission) {
-            // ✅ booked : ajouté seulement s'il existe
             if (mission.booked() != null) {
                 metadata.put("booked", String.valueOf(mission.booked()));
-            } else {
-                metadata.put("booked", null); // ou tu peux simplement ne pas le mettre du tout
             }
+            // Don't put null explicitly, just skip
 
             metadata.put("moveId", mission.moveId());
             metadata.put("sourceAddress", mission.sourceAddress());
@@ -315,22 +313,18 @@ public class NotificationService {
             metadata.put("senderName", request.getSenderName());
             metadata.put("mailContent", request.getMailContent());
 
-        } else if (payload instanceof BusinessDTO(
-                String name, String email, String address, String phone, String website, String attestationCapaciteUrl,
-                String kbisUrl, String assuranceTransportUrl, String identityProofUrl, String attestationVigilanceUrl,
-                String attestationRegulariteFiscaleUrl
-        )) {
-            metadata.put("name", name);
-            metadata.put("email", email);
-            metadata.put("address", address);
-            metadata.put("phone", phone);
-            metadata.put("website", website);
-            metadata.put("attestationCapaciteUrl", attestationCapaciteUrl);
-            metadata.put("kbisUrl", kbisUrl);
-            metadata.put("assuranceTransportUrl", assuranceTransportUrl);
-            metadata.put("identityProofUrl", identityProofUrl);
-            metadata.put("attestationVigilanceUrl", attestationVigilanceUrl);
-            metadata.put("attestationRegulariteFiscaleUrl", attestationRegulariteFiscaleUrl);
+        } else if (payload instanceof BusinessDTO businessDTO) {
+            metadata.put("name", businessDTO.name());
+            metadata.put("email", businessDTO.email());
+            metadata.put("address", businessDTO.address());
+            metadata.put("phone", businessDTO.phone());
+            metadata.put("website", businessDTO.website());
+            metadata.put("attestationCapaciteUrl", businessDTO.attestationCapaciteUrl());
+            metadata.put("kbisUrl", businessDTO.kbisUrl());
+            metadata.put("assuranceTransportUrl", businessDTO.assuranceTransportUrl());
+            metadata.put("identityProofUrl", businessDTO.identityProofUrl());
+            metadata.put("attestationVigilanceUrl", businessDTO.attestationVigilanceUrl());
+            metadata.put("attestationRegulariteFiscaleUrl", businessDTO.attestationRegulariteFiscaleUrl());
             metadata.put("sentAt", LocalDateTime.now().toString());
 
         } else if (payload instanceof MoveRequest moveRequest) {
@@ -362,6 +356,7 @@ public class NotificationService {
 
         return metadata;
     }
+
 
     private void sendFcmNotification(Notification notification) {
         // Skip FCM notification if body is null (prevented duplicate)
