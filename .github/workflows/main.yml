@@ -58,5 +58,5 @@ jobs:
         with:
           args: test --all-projects --severity-threshold=medium
         env:
-          JAVA_HOME: ${{ env.JAVA_HOME }}
+          JAVA_HOME: /opt/hostedtoolcache/jdk/21/x64
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
