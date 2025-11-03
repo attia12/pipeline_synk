@@ -53,24 +53,10 @@ jobs:
           distribution: temurin
           java-version: 21
 
-      - name: Show current directory and files
-        run: |
-          echo "PWD:"
-          pwd
-          echo "Directory contents:"
-          ls -la
-
-    
-
-      - name: Install Snyk CLI
-        run: npm install -g snyk
-
-      - name: Authenticate Snyk CLI
-        run: snyk auth ${{ secrets.SNYK_TOKEN }}
+      - name: Run Snyk Maven Scan
+        uses: snyk/actions/maven@main
+        with:
+          args: test --all-projects --severity-threshold=medium
         env:
-          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-
-      - name: Run Snyk Vulnerability Scan
-        run: snyk test --all-projects --severity-threshold=medium -d
-        env:
+          JAVA_HOME: /opt/hostedtoolcache/jdk/21/x64
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
